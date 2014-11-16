@@ -11,7 +11,7 @@ public class Application extends android.app.Application {
   public static final boolean APPDEBUG = false;
 
   // Debugging tag for the application
-  public static final String APPTAG = "AnyWall";
+  public static final String APPTAG = "TagPi";
 
   // Used to pass location from MainActivity to PostActivity
   public static final String INTENT_EXTRA_LOCATION = "location";
@@ -33,10 +33,10 @@ public class Application extends android.app.Application {
     super.onCreate();
 
     ParseObject.registerSubclass(AnywallPost.class);
-    Parse.initialize(this, "YOUR_PARSE_APPLICATION_ID",
-        "YOUR_PARSE_CLIENT_KEY");
+    Parse.initialize(this, getString(R.string.parseApp_ID),
+            getString(R.string.parseClient_ID));
 
-    preferences = getSharedPreferences("com.parse.anywall", Context.MODE_PRIVATE);
+    preferences = getSharedPreferences("com.parse.tagteampi", Context.MODE_PRIVATE);
 
     configHelper = new ConfigHelper();
     configHelper.fetchConfigIfNeeded();
