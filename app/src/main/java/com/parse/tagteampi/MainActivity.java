@@ -234,7 +234,7 @@ public class MainActivity extends FragmentActivity implements LocationListener,
     });
 
     // Set up the handler for the post button click
-    Button postButton = (Button) findViewById(R.id.post_button);
+    /*Button postButton = (Button) findViewById(R.id.post_button);
     postButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
         // Only allow posts if we have a location
@@ -249,7 +249,7 @@ public class MainActivity extends FragmentActivity implements LocationListener,
         intent.putExtra(Application.INTENT_EXTRA_LOCATION, myLoc);
         startActivity(intent);
       }
-    });
+    });*/
   }
 
   /*

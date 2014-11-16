@@ -254,6 +254,9 @@
     <eat-comment/>
     <string name="login">Log in</string>
     <string name="logout_full">Log out of PiTag</string>
+    <string name="mapsAPIkeyV2">AIzaSyCcOfnoul8Lpu0w0kmBh3cUaKDRM2ZxaS4</string>
+    <string name="parseApp_ID">AUGlscWFinH8OICgtncqVF5xFuGY0NIvXmjmaHjX</string>
+    <string name="parseClient_ID">2itivmsVyX5Awmhdf67e89Y5Apz8sEmscCrdA4UO</string>
     <string name="post">Post</string>
     <string name="post_out_of_range">Can\'t view post! Get closer.</string>
     <string name="powered_by">Powered by</string>

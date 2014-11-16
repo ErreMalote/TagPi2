@@ -5,7 +5,7 @@ android {
     buildToolsVersion "21.1.0"
 
     defaultConfig {
-        applicationId "com.parse.anywall"
+        applicationId "com.parse.tagteampi"
         minSdkVersion 11
         targetSdkVersion 21
     }

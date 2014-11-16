@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.parse.anywall"
-    android:versionCode="1"
+    package="com.parse.tagteampi"
     android:versionName="1.0" >
 
     <uses-sdk
@@ -22,6 +21,7 @@
      The following permission is not required to use
      Google Maps Android API v2, but is recommended.
     -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-feature
@@ -41,7 +41,7 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="YOUR_GOOGLE_ANDROID_MAPS_V2_API_KEY" />
+            android:value="AIzaSyBnoda5RjkWDQRyIem6UUYJ23fZLqzB0hA" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

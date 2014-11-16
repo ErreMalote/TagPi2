@@ -19,7 +19,8 @@
      The following permission is not required to use
      Google Maps Android API v2, but is recommended.
     -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <uses-feature
         android:glEsVersion="0x00020000"
@@ -39,8 +40,8 @@
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="YOUR_GOOGLE_ANDROID_MAPS_V2_API_KEY" />
-        
+            android:value="AIzaSyBnoda5RjkWDQRyIem6UUYJ23fZLqzB0hA" />
+
         <meta-data android:name="com.google.android.gms.version" 
             android:value="@integer/google_play_services_version" />
 
