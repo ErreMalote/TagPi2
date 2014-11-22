@@ -15,6 +15,9 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
+import com.parse.ParseGeoPoint;
+
 import java.lang.String;
 
 
@@ -55,11 +58,21 @@ public class GameSettingsActivity extends Activity {
 
                 //TODO: Create the lobby screen and activate the following code:
                 Intent toLobby = new Intent(GameSettingsActivity.this, MainLobbyActivity.class);
-                toLobby.putExtra("GAME_RADIUS", GAME_RADIUS);
+                toLobby.putExtra("gameRadiousS", GAME_RADIUS);
                 toLobby.putExtra("TAG_RADIUS", TAG_RADIUS);
-                toLobby.putExtra("TAG_LIMIT", TAG_LIMIT);
-                toLobby.putExtra("MINUTES", MINUTES);
+                toLobby.putExtra("tagLimit", TAG_LIMIT);
+                toLobby.putExtra("gameDuration", MINUTES);
+
+                TagGame tg = new TagGame();
+                tg.setRadious(GAME_RADIUS);
+                tg.setTagLimit(TAG_LIMIT);
+                tg.setTagRadious(TAG_RADIUS);
+                tg.
+                tg.setLocation();
+
+
                 startActivity(toLobby);
+
             }
         });
 

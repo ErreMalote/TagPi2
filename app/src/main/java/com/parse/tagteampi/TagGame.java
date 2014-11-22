@@ -1,14 +1,12 @@
 package com.parse.tagteampi;
 
-import android.location.Criteria;
 
-import com.parse.LocationCallback;
 import com.parse.ParseClassName;
-import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
 
 /**
  * Data model for a post.
@@ -16,21 +14,32 @@ import com.parse.ParseUser;
 @ParseClassName("Game")
 public class TagGame extends ParseObject {
 
-    public String getName() {
-        return getString("text");
+    public int getRadious() {
+        return getInt("gameRadius");
     }
-
-    public void setName(String value) {
-        put("text", value);
+    public void setRadious(int value) {
+        put("gameRadius", value);
     }
 
     public ParseUser getUser() {
-        return getParseUser("user");
+        return getParseUser("host_user");
     }
 
     public void setUser(ParseUser value) {
-        put("user", value);
+        put("host_user", value);
     }
+
+    public long getTime() {return getLong("gameDuration"); }
+
+    public void setTime(long value) { put("gameDuration", value);}
+
+    public int getTagLimit() {return getInt("tagLimit"); }
+
+    public void setTagLimit(int value) { put("TagLimit", value);}
+
+    public int getTagRadious() {return getInt("tagRadius"); }
+
+    public void setTagRadious(int value) { put("TagRadius", value);}
 
     public ParseGeoPoint getLocation() {
         return getParseGeoPoint("location");
