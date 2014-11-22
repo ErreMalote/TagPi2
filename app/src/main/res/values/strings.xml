@@ -22,4 +22,6 @@
     <string name="parseApp_ID">AUGlscWFinH8OICgtncqVF5xFuGY0NIvXmjmaHjX</string>
     <string name="parseClient_ID">2itivmsVyX5Awmhdf67e89Y5Apz8sEmscCrdA4UO</string>
     <string name="mapsAPIkeyV2">AIzaSyCcOfnoul8Lpu0w0kmBh3cUaKDRM2ZxaS4</string>
+    <string name="mainLobbyTitle">Active Games</string>
+    <string name="createGame">create game</string>
 </resources>
