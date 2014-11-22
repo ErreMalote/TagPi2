@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/orange" />
+</shape><!-- From: file:/C:/Users/Cameron/AndroidStudioProjects/REYNOALDO%20PROJECT/TagPi2/app/src/main/res/drawable/actionbar_bg.xml -->
