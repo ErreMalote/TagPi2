@@ -48,12 +48,22 @@
         <activity
             android:name="com.parse.tagteampi.LoginActivity"
             android:label="@string/title_activity_login"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".WelcomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WelcomeActivity" />
+        </activity>
 
         <activity
             android:name="com.parse.tagteampi.SignUpActivity"
             android:label="@string/title_activity_signup"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:parentActivityName=".WelcomeActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".WelcomeActivity" />
+        </activity>
 
         <activity
             android:name="com.parse.tagteampi.DispatchActivity"
