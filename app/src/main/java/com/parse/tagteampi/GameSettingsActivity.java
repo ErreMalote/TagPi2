@@ -67,8 +67,7 @@ public class GameSettingsActivity extends Activity {
                 tg.setRadious(GAME_RADIUS);
                 tg.setTagLimit(TAG_LIMIT);
                 tg.setTagRadious(TAG_RADIUS);
-                tg.
-                tg.setLocation();
+
 
 
                 startActivity(toLobby);

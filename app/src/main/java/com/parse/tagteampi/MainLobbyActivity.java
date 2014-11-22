@@ -53,9 +53,9 @@ public class MainLobbyActivity extends Activity {
 
 
                 // go to the selected game
-                Intent goToGame = new Intent(MainLobbyActivity.this , InGameActivity.class);
-                goToGame.putExtra("gameSelected", gameSelected);
-                startActivity(goToGame);
+               // Intent goToGame = new Intent(MainLobbyActivity.this , InGameActivity.class);
+               // goToGame.putExtra("gameSelected", gameSelected);
+                //startActivity(goToGame);
             }
         });
 

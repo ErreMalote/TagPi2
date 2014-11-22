@@ -2,40 +2,40 @@
 <pre-dex-items>
 
     <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\classes-f64f8c3866012b6499f4aeb5a4c838aa2dcfc277.jar"
-        jar="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
-        jumboMode="false"
-        revision="21.1.0"
-        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
-    <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-80e839762042aeb2bf74f5dde51ddeacbb8eb838.jar"
-        jar="C:\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
-        jumboMode="false"
-        revision="21.1.0"
-        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
-    <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\Parse-1.6.0-fc67be120e23e2796510669cd5689e05a7899966.jar"
-        jar="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\libs\Parse-1.6.0.jar"
-        jumboMode="false"
-        revision="21.1.0"
-        sha1="2a812174191af5a4513a873602a765b0171f252c"/>
-    <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\classes-5bbeacbf4597d23f8a5b1ccc114984033659db4f.jar"
-        jar="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.71\classes.jar"
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\classes-7b76e6a9518652ce81d9b24debeed94e5d2d33a6.jar"
+        jar="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.1.71\classes.jar"
         jumboMode="false"
         revision="21.1.0"
         sha1="0f6d5c1ef2e982c3b7858408e3df389cf5d202da"/>
     <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\classes-906a3aa5c072e74c8cc077bc28584ea32bb801a6.jar"
-        jar="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-a0f77031aabdf13eb66d556b5632e1ef3307d9ac.jar"
+        jar="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
+    <item
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\support-annotations-21.0.0-6044a41e9ab5c7c505361266afb41c741624647c.jar"
+        jar="C:\Users\Owner\sdk\extras\android\m2repository\com\android\support\support-annotations\21.0.0\support-annotations-21.0.0.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="1a578b9607b36266c63d43a4fa0ab5664dbe911e"/>
+    <item
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\classes-461d345679e401f7c70f2a58e365c778d03efc23.jar"
+        jar="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.0\classes.jar"
         jumboMode="false"
         revision="21.1.0"
         sha1="95fd37732ec852e99f07eeb516a3650172f1d136"/>
     <item
-        dex="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\pre-dexed\debug\internal_impl-21.0.0-3dbe8140534b6a23307684556b393cd345f95966.jar"
-        jar="C:\Users\Cameron\AndroidStudioProjects\REYNOALDO PROJECT\TagPi2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\libs\internal_impl-21.0.0.jar"
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\Parse-1.6.0-94efcb46620bf1071f1a04f9954608f49a5d33d2.jar"
+        jar="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\libs\Parse-1.6.0.jar"
         jumboMode="false"
         revision="21.1.0"
-        sha1="1609e6d42d0480b0f4188e2c29f75388fa12a8f0"/>
+        sha1="2a812174191af5a4513a873602a765b0171f252c"/>
+    <item
+        dex="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\pre-dexed\debug\classes-13165330c2606205792affe2bd32ae45377ff9be.jar"
+        jar="C:\Users\Owner\AndroidstudioProjects\TagPi2\app\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.0\classes.jar"
+        jumboMode="false"
+        revision="21.1.0"
+        sha1="686344a780033e4ba22b926cd225f8d4941247e6"/>
 
 </pre-dex-items>

@@ -32,7 +32,7 @@ public class Application extends android.app.Application {
   public void onCreate() {
     super.onCreate();
 
-    ParseObject.registerSubclass(AnywallPost.class);
+    //ParseObject.registerSubclass(AnywallPost.class);
     Parse.initialize(this, getString(R.string.parseApp_ID),
             getString(R.string.parseClient_ID));//username: reynaldogonzalez8@hotmail.com, password: ParsePasswordUTATeamPi
 

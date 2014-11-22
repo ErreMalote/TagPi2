@@ -3,4 +3,4 @@
     android:shape="rectangle">
     <corners android:radius="5dp" />
     <solid android:color="@color/orange" />
-</shape><!-- From: file:/C:/Users/Cameron/AndroidStudioProjects/REYNOALDO%20PROJECT/TagPi2/app/src/main/res/drawable/button_bg_selected.xml -->
+</shape><!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/drawable/button_bg_selected.xml -->
