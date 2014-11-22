@@ -40,7 +40,7 @@
     <Button
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:id="@+id/button11"
+        android:id="@+id/button_create_game"
         android:text="@string/createGame" />
     </LinearLayout>
 

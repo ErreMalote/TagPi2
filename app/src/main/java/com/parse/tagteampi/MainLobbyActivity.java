@@ -3,9 +3,11 @@ package com.parse.tagteampi;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.view.Menu;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 
 
@@ -17,6 +19,7 @@ import com.parse.ParseQueryAdapter;
 public class MainLobbyActivity extends Activity {
 
     private ListView list;
+    private Button createGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,17 @@ public class MainLobbyActivity extends Activity {
 
 
         list = (ListView) findViewById(R.id.GamesListView);
+        createGame = (Button) findViewById(R.id.button_create_game);
+
+        createGame.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(getBaseContext(), GameSettingsActivity.class);
+                startActivity(i);
+            }
+        });
+
+        //Listview stuff
         list.setAdapter(adapter2);
 
         list.setOnItemClickListener(new OnItemClickListener() {

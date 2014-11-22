@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -12,9 +13,15 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.LogInCallback;
+import com.parse.Parse;
 import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
+import java.util.List;
 
 /**
  * Activity which displays a login screen to the user, offering registration as well.
@@ -55,8 +62,8 @@ public class LoginActivity extends Activity {
   }
 
   private void login() {
-    String username = usernameEditText.getText().toString().trim();
-    String password = passwordEditText.getText().toString().trim();
+    final String username = usernameEditText.getText().toString().trim();
+    final String password = passwordEditText.getText().toString().trim();
 
     // Validate the log in data
     boolean validationError = false;
@@ -94,10 +101,9 @@ public class LoginActivity extends Activity {
           // Show the error message
           Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
         } else {
-          // Start an intent for the dispatch activity
-          Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
-          intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
           startActivity(intent);
+            finish();
         }
       }
     });

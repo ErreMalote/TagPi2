@@ -66,14 +66,16 @@
         <activity
             android:name="com.parse.tagteampi.WelcomeActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo" />
+            android:screenOrientation="portrait" />
         <activity
             android:name="com.parse.tagteampi.PostActivity"
             android:label="@string/activity_post_title"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name="com.parse.tagteampi.SettingsActivity"
+            android:label="@string/title_activity_settings" />
+        <activity
+            android:name="com.parse.tagteampi.GameSettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity
             android:name="com.parse.tagteampi.MainLobbyActivity"
