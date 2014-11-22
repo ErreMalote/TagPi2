@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/res/values-large/values.xml -->
+    <!-- From: file:/C:/Users/Cameron/AndroidStudioProjects/REYNOALDO%20PROJECT/TagPi2/app/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.0/res/values-large/values.xml -->
     <eat-comment/>
     <bool name="abc_action_bar_embed_tabs_pre_jb">true</bool>
     <bool name="abc_config_allowActionMenuItemTextWithIcon">true</bool>
@@ -13,7 +13,7 @@
     <integer name="abc_max_action_buttons">4</integer>
     <style name="Base.Theme.AppCompat.DialogWhenLarge" parent="Base.Theme.AppCompat.Dialog.FixedSize"/>
     <style name="Base.Theme.AppCompat.Light.DialogWhenLarge" parent="Base.Theme.AppCompat.Light.Dialog.FixedSize"/>
-    <!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/values-large/styles.xml -->
+    <!-- From: file:/C:/Users/Cameron/AndroidStudioProjects/REYNOALDO%20PROJECT/TagPi2/app/src/main/res/values-large/styles.xml -->
     <eat-comment/>
     <style name="LoginFormContainer">
         <item name="android:layout_width">400dp</item>

@@ -1,59 +1,57 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg"
     tools:context=".SignUpActivity" >
 
     <!-- Login form -->
 
-    <ScrollView
-        android:id="@+id/signup_form"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#ff363136">
+    <LinearLayout
+        style="@style/LoginFormContainer"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:layout_margin="16dp"
+        android:background="@drawable/login_box">
 
-        <LinearLayout
-            style="@style/LoginFormContainer"
-            android:orientation="vertical" >
+        <EditText
+            android:id="@+id/username_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_username"
+            android:inputType="textEmailAddress"
+            android:maxLines="1"
+            android:singleLine="true" />
 
-            <EditText
-                android:id="@+id/username_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_username"
-                android:inputType="textEmailAddress"
-                android:maxLines="1"
-                android:singleLine="true" />
+        <EditText
+            android:id="@+id/password_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true" />
 
-            <EditText
-                android:id="@+id/password_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_password"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true" />
-            
-            <EditText
-                android:id="@+id/password_again_edit_text"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/prompt_password_again"
-                android:inputType="textPassword"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:imeActionId="@+id/edittext_action_signup"
-                android:imeActionLabel="@string/signup"
-                android:imeOptions="actionUnspecified" />
+        <EditText
+            android:id="@+id/password_again_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_password_again"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:imeActionId="@+id/edittext_action_signup"
+            android:imeActionLabel="@string/signup"
+            android:imeOptions="actionUnspecified" />
 
-            <Button
-                android:id="@+id/action_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="16dp"
-                android:paddingLeft="32dp"
-                android:paddingRight="32dp"
-                android:text="@string/signup" />
-        </LinearLayout>
-    </ScrollView>
+        <Button
+            android:id="@+id/action_button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            style="@style/LoginButton"
+            android:text="@string/signup" />
+    </LinearLayout>
 
-</merge><!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/layout/activity_signup.xml -->
+</FrameLayout><!-- From: file:/C:/Users/Cameron/AndroidStudioProjects/REYNOALDO%20PROJECT/TagPi2/app/src/main/res/layout/activity_signup.xml -->
