@@ -33,10 +33,10 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
-        <activity
+        ----activity
             android:name=".InGameActivity"
             android:label="@string/app_name"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait" /-->
 
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
@@ -78,10 +78,7 @@
             android:name="com.parse.tagteampi.WelcomeActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait" />
-        <activity
-            android:name="com.parse.tagteampi.PostActivity"
-            android:label="@string/activity_post_title"
-            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name="com.parse.tagteampi.SettingsActivity"
             android:label="@string/title_activity_settings" />
@@ -90,6 +87,9 @@
             android:label="@string/title_activity_settings" />
         <activity
             android:name=".MainLobbyActivity"
+            android:label="@string/app_name" />
+        <activity
+            android:name=".LobbyActivity"
             android:label="@string/app_name" />
     </application>
 

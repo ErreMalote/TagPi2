@@ -2,6 +2,7 @@ package com.parse.tagteampi;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,7 +17,9 @@ import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import com.parse.Parse;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseUser;
 
 import java.lang.String;
 
@@ -27,11 +30,13 @@ public class GameSettingsActivity extends Activity {
     private Spinner timeLimitSpinner;
     private RadioGroup tagLimitGroup;
     private Button apply;
+    private ParseGeoPoint point = new ParseGeoPoint();
     //integer values for various uses
     private int GAME_RADIUS = 300;
     private int TAG_RADIUS = 10;
     private int TAG_LIMIT = 0;
     private int MINUTES = 0;
+    //private String USER_NAME;
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
     private String[] RADIUS_INTERVALS = new String[38];
@@ -43,6 +48,10 @@ public class GameSettingsActivity extends Activity {
         //TODO: connect user information with game settings as extras
         //USER_NAME = this.getIntent().getExtras().getString("Username");
         setContentView(R.layout.activity_create_game);
+
+        //Intent intent = getIntent();
+       // Location location = intent.getParcelableExtra(Application.INTENT_EXTRA_LOCATION);
+       // point = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
         //Initialize the apply button, which currently pushes settings' values to the screen through Toast
         //TODO: Pass user info (user name, ID, etc.) through game settings to lobby activity through extra
@@ -57,7 +66,7 @@ public class GameSettingsActivity extends Activity {
                 Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
 
                 //TODO: Create the lobby screen and activate the following code:
-                Intent toLobby = new Intent(GameSettingsActivity.this, MainLobbyActivity.class);
+                Intent toLobby = new Intent(GameSettingsActivity.this, LobbyActivity.class);
                 toLobby.putExtra("gameRadiousS", GAME_RADIUS);
                 toLobby.putExtra("TAG_RADIUS", TAG_RADIUS);
                 toLobby.putExtra("tagLimit", TAG_LIMIT);
@@ -67,9 +76,13 @@ public class GameSettingsActivity extends Activity {
                 tg.setRadious(GAME_RADIUS);
                 tg.setTagLimit(TAG_LIMIT);
                 tg.setTagRadious(TAG_RADIUS);
+                tg.setTime(MINUTES);
+                tg.setLocation(point);
+                tg.setUser(ParseUser.getCurrentUser().getUsername());
 
-
-
+                ActiveUsers au = new ActiveUsers();
+                au.setGameId(ParseUser.getCurrentUser().getObjectId());
+                au.setUserId(ParseUser.getCurrentUser().getUsername());
                 startActivity(toLobby);
 
             }

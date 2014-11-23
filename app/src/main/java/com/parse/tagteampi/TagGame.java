@@ -21,11 +21,11 @@ public class TagGame extends ParseObject {
         put("gameRadius", value);
     }
 
-    public ParseUser getUser() {
-        return getParseUser("host_user");
+    public String getUser() {
+        return getString("host_user");
     }
 
-    public void setUser(ParseUser value) {
+    public void setUser(String value) {
         put("host_user", value);
     }
 
