@@ -19,7 +19,11 @@ import android.widget.Toast;
 
 import com.parse.Parse;
 import com.parse.ParseGeoPoint;
+<<<<<<< HEAD
 import com.parse.ParseUser;
+=======
+import com.parse.ParseObject;
+>>>>>>> origin/master
 
 import java.lang.String;
 
@@ -48,6 +52,8 @@ public class GameSettingsActivity extends Activity {
         //TODO: connect user information with game settings as extras
         //USER_NAME = this.getIntent().getExtras().getString("Username");
         setContentView(R.layout.activity_create_game);
+        //Add TagGame ParseObject registration
+        ParseObject.registerSubclass(TagGame.class);
 
         //Intent intent = getIntent();
        // Location location = intent.getParcelableExtra(Application.INTENT_EXTRA_LOCATION);
