@@ -16,15 +16,10 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
-
 import com.parse.Parse;
 import com.parse.ParseGeoPoint;
-<<<<<<< HEAD
 import com.parse.ParseUser;
-=======
 import com.parse.ParseObject;
->>>>>>> origin/master
-
 import java.lang.String;
 
 

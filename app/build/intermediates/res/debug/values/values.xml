@@ -226,6 +226,7 @@
     <eat-comment/>
     <string name="action_settings">Settings</string>
     <string name="activity_post_title">Create a Post</string>
+    <string name="activity_suspension_title">Suspension List</string>
     <string name="app_name">PiTag</string>
     <string name="apply">Apply</string>
     <string name="character_count_placeholder">0/140</string>
