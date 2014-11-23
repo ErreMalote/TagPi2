@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 
 import java.lang.String;
 
@@ -43,6 +44,8 @@ public class GameSettingsActivity extends Activity {
         //TODO: connect user information with game settings as extras
         //USER_NAME = this.getIntent().getExtras().getString("Username");
         setContentView(R.layout.activity_create_game);
+        //Add TagGame ParseObject registration
+        ParseObject.registerSubclass(TagGame.class);
 
         //Initialize the apply button, which currently pushes settings' values to the screen through Toast
         //TODO: Pass user info (user name, ID, etc.) through game settings to lobby activity through extra

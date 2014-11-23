@@ -30,6 +30,7 @@
     <string name="taglimit">Tag limit</string>
     <string name="apply">Apply</string>
     <string name="defaultSettings">Default</string>
+    <string name="activity_suspension_title">Suspension List</string>
     <string-array name="times_array">
         <item>10 minutes</item>
         <item>15 minutes</item>
