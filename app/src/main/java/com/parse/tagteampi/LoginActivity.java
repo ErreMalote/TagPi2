@@ -102,6 +102,9 @@ public class LoginActivity extends Activity {
           Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
         } else {
             Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
+
+            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TOP);
+
           startActivity(intent);
             finish();
         }

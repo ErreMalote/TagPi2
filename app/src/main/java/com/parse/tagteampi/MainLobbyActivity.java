@@ -26,8 +26,8 @@ public class MainLobbyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_lobby);
 
-        final ParseQueryAdapter adapter2 = new ParseQueryAdapter(this, "Games");
-        adapter2.setTextKey("user");
+        final ParseQueryAdapter adapter2 = new ParseQueryAdapter(this, "Game");
+        adapter2.setTextKey("host_user");
 
 
         list = (ListView) findViewById(R.id.GamesListView);

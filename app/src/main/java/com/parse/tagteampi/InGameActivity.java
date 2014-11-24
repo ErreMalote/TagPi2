@@ -1,4 +1,5 @@
 /*
+
 package com.parse.tagteampi;
 
 import java.util.HashMap;
@@ -55,18 +56,25 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     GooglePlayServicesClient.ConnectionCallbacks,
     GooglePlayServicesClient.OnConnectionFailedListener {
 
-  */
+
+*/
 /*
    * Define a request code to send to Google Play services This code is returned in
    * Activity.onActivityResult
    *//*
+*/
+/*
 
   private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
-  */
+  *//*
+
+*/
 /*
    * Constants for location update parameters
    *//*
+*/
+/*
 
   // Milliseconds per second
   private static final int MILLISECONDS_PER_SECOND = 1000;
@@ -85,10 +93,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
   private static final long FAST_INTERVAL_CEILING_IN_MILLISECONDS = MILLISECONDS_PER_SECOND
       * FAST_CEILING_IN_SECONDS;
 
-  */
+  *//*
+
+*/
 /*
    * Constants for handling location results
    *//*
+*/
+/*
 
   // Conversion from feet to meters
   private static final float METERS_PER_FEET = 0.3048f;
@@ -108,10 +120,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
   // Maximum post search radius for map in kilometers
   private static final int MAX_POST_SEARCH_DISTANCE = 100;
 
-  */
+  *//*
+
+*/
 /*
    * Other class member variables
    *//*
+*/
+/*
 
   // Map fragment
   private SupportMapFragment mapFragment;
@@ -240,7 +256,9 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     });
 
     // Set up the handler for the post button click
-    */
+    *//*
+
+*/
 /*Button postButton = (Button) findViewById(R.id.post_button);
     postButton.setOnClickListener(new OnClickListener() {
       public void onClick(View v) {
@@ -257,13 +275,19 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         startActivity(intent);
       }
     });*//*
+*/
+/*
 
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called when the Activity is no longer visible at all. Stop updates and disconnect.
    *//*
+*/
+/*
 
   @Override
   public void onStop() {
@@ -278,10 +302,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     super.onStop();
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called when the Activity is restarted, even before it becomes visible.
    *//*
+*/
+/*
 
   @Override
   public void onStart() {
@@ -291,10 +319,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     locationClient.connect();
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called when the Activity is resumed. Updates the view.
    *//*
+*/
+/*
 
   @Override
   protected void onResume() {
@@ -322,7 +354,9 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     doListQuery();
   }
 
-  */
+  *//*
+
+*/
 /*
    * Handle results returned to this Activity by other Activities started with
    * startActivityForResult(). In particular, the method onConnectionFailed() in
@@ -330,6 +364,8 @@ public class InGameActivity extends FragmentActivity implements LocationListener
    * an Activity that handles Google Play services problems. The result of this call returns here,
    * to onActivityResult.
    *//*
+*/
+/*
 
   @Override
   protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -369,12 +405,16 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Verify that Google Play services is available before making a request.
-   * 
+   *
    * @return true if Google Play services is available, otherwise false
    *//*
+*/
+/*
 
   private boolean servicesConnected() {
     // Check that Google Play services is available
@@ -401,11 +441,15 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called by Location Services when the request to connect the client finishes successfully. At
    * this point, you can request the current location or start periodic updates
    *//*
+*/
+/*
 
   public void onConnected(Bundle bundle) {
     if (Application.APPDEBUG) {
@@ -415,10 +459,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     startPeriodicUpdates();
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called by Location Services if the connection to the location client drops because of an error.
    *//*
+*/
+/*
 
   public void onDisconnected() {
     if (Application.APPDEBUG) {
@@ -426,10 +474,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Called by Location Services if the attempt to Location Services fails.
    *//*
+*/
+/*
 
   public void onConnectionFailed(ConnectionResult connectionResult) {
     // Google Play services can resolve some errors it detects. If the error has a resolution, try
@@ -453,10 +505,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Report location updates to the UI.
    *//*
+*/
+/*
 
   public void onLocationChanged(Location location) {
     currentLocation = location;
@@ -479,28 +535,40 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     doListQuery();
   }
 
-  */
+  *//*
+
+*/
 /*
    * In response to a request to start updates, send a request to Location Services
    *//*
+*/
+/*
 
   private void startPeriodicUpdates() {
     locationClient.requestLocationUpdates(locationRequest, this);
   }
 
-  */
+  *//*
+
+*/
 /*
    * In response to a request to stop updates, send a request to Location Services
    *//*
+*/
+/*
 
   private void stopPeriodicUpdates() {
     locationClient.removeLocationUpdates(this);
   }
 
-  */
+  *//*
+
+*/
 /*
    * Get the current location
    *//*
+*/
+/*
 
   private Location getLocation() {
     // If Google Play Services is available
@@ -512,10 +580,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Set up a query to update the list view
    *//*
+*/
+/*
 
   private void doListQuery() {
     Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
@@ -527,10 +599,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Set up the query to update the map view
    *//*
+*/
+/*
 
   private void doMapQuery() {
     final int myUpdateNumber = ++mostRecentMapUpdate;
@@ -558,12 +634,16 @@ public class InGameActivity extends FragmentActivity implements LocationListener
           }
           return;
         }
-        */
+        *//*
+
+*/
 /*
          * Make sure we're processing results from
          * the most recent update, in case there
          * may be more than one in progress.
          *//*
+*/
+/*
 
         if (myUpdateNumber != mostRecentMapUpdate) {
           return;
@@ -627,10 +707,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     });
   }
 
-  */
+  *//*
+
+*/
 /*
    * Helper method to clean up old markers
    *//*
+*/
+/*
 
   private void cleanUpMarkers(Set<String> markersToKeep) {
     for (String objId : new HashSet<String>(mapMarkers.keySet())) {
@@ -643,19 +727,27 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Helper method to get the Parse GEO point representation of a location
    *//*
+*/
+/*
 
   private ParseGeoPoint geoPointFromLocation(Location loc) {
     return new ParseGeoPoint(loc.getLatitude(), loc.getLongitude());
   }
 
-  */
+  *//*
+
+*/
 /*
    * Displays a circle on the map representing the search radius
    *//*
+*/
+/*
 
   private void updateCircle(LatLng myLatLng) {
     if (mapCircle == null) {
@@ -672,10 +764,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
   }
 
-  */
+  *//*
+
+*/
 /*
    * Zooms the map to show the area of interest based on the search radius
    *//*
+*/
+/*
 
   private void updateZoom(LatLng myLatLng) {
     // Get the bounds to zoom to
@@ -684,10 +780,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     mapFragment.getMap().animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 5));
   }
 
-  */
+  *//*
+
+*/
 /*
    * Helper method to calculate the offset for the bounds used in map zooming
    *//*
+*/
+/*
 
   private double calculateLatLngOffset(LatLng myLatLng, boolean bLatOffset) {
     // The return offset, initialized to the default difference
@@ -733,10 +833,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     return latLngOffset;
   }
 
-  */
+  *//*
+
+*/
 /*
    * Helper method to calculate the bounds for map zooming
    *//*
+*/
+/*
 
   LatLngBounds calculateBoundsWithCenter(LatLng myLatLng) {
     // Create a bounds
@@ -775,10 +879,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     return true;
   }
 
-  */
+  *//*
+
+*/
 /*
    * Show a dialog returned by Google Play services for the connection error code
    *//*
+*/
+/*
 
   private void showErrorDialog(int errorCode) {
     // Get the error dialog from Google Play services
@@ -800,40 +908,56 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     }
   }
 
-  */
+  *//*
+
+*/
 /*
    * Define a DialogFragment to display the error dialog generated in showErrorDialog.
    *//*
+*/
+/*
 
   public static class ErrorDialogFragment extends DialogFragment {
     // Global field to contain the error dialog
     private Dialog mDialog;
 
-    */
+    *//*
+
+*/
 /**
      * Default constructor. Sets the dialog field to null
      *//*
+*/
+/*
 
     public ErrorDialogFragment() {
       super();
       mDialog = null;
     }
 
-    */
+    *//*
+
+*/
 /*
      * Set the dialog to display
-     * 
+     *
      * @param dialog An error dialog
      *//*
+*/
+/*
 
     public void setDialog(Dialog dialog) {
       mDialog = dialog;
     }
 
-    */
+    *//*
+
+*/
 /*
      * This method must return a Dialog to the DialogFragment.
      *//*
+*/
+/*
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

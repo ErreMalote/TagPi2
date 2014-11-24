@@ -1,26 +1,28 @@
 package com.parse.tagteampi;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.NumberPicker;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
-import android.widget.RadioButton;
 import android.widget.Spinner;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
-import com.parse.Parse;
+
+import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseUser;
 import com.parse.ParseObject;
-import java.lang.String;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
 
 
 public class GameSettingsActivity extends Activity {
@@ -29,17 +31,19 @@ public class GameSettingsActivity extends Activity {
     private Spinner timeLimitSpinner;
     private RadioGroup tagLimitGroup;
     private Button apply;
-    private ParseGeoPoint point = new ParseGeoPoint();
     //integer values for various uses
     private int GAME_RADIUS = 300;
     private int TAG_RADIUS = 10;
     private int TAG_LIMIT = 0;
     private int MINUTES = 0;
-    //private String USER_NAME;
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
     private String[] RADIUS_INTERVALS = new String[38];
     //private String USER_NAME;
+
+
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +51,6 @@ public class GameSettingsActivity extends Activity {
         //TODO: connect user information with game settings as extras
         //USER_NAME = this.getIntent().getExtras().getString("Username");
         setContentView(R.layout.activity_create_game);
-        //Add TagGame ParseObject registration
-        ParseObject.registerSubclass(TagGame.class);
-
-        //Intent intent = getIntent();
-       // Location location = intent.getParcelableExtra(Application.INTENT_EXTRA_LOCATION);
-       // point = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
         //Initialize the apply button, which currently pushes settings' values to the screen through Toast
         //TODO: Pass user info (user name, ID, etc.) through game settings to lobby activity through extra
@@ -66,26 +64,64 @@ public class GameSettingsActivity extends Activity {
                         + "\nTime limit: " + MINUTES;
                 Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
 
-                //TODO: Create the lobby screen and activate the following code:
-                Intent toLobby = new Intent(GameSettingsActivity.this, LobbyActivity.class);
-                toLobby.putExtra("gameRadiousS", GAME_RADIUS);
-                toLobby.putExtra("TAG_RADIUS", TAG_RADIUS);
-                toLobby.putExtra("tagLimit", TAG_LIMIT);
-                toLobby.putExtra("gameDuration", MINUTES);
+                //LocationManager used to get the current location of the user.  Will be used for
+                //setting the center of the game play area.
+                LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-                TagGame tg = new TagGame();
-                tg.setRadious(GAME_RADIUS);
-                tg.setTagLimit(TAG_LIMIT);
-                tg.setTagRadious(TAG_RADIUS);
-                tg.setTime(MINUTES);
-                tg.setLocation(point);
-                tg.setUser(ParseUser.getCurrentUser().getUsername());
+                if (lastLocation != null) {
 
-                ActiveUsers au = new ActiveUsers();
-                au.setGameId(ParseUser.getCurrentUser().getObjectId());
-                au.setUserId(ParseUser.getCurrentUser().getUsername());
-                startActivity(toLobby);
+                    latitude = lastLocation.getLatitude();
+                    longitude = lastLocation.getLongitude();
 
+                    final ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
+
+                    //Creates Game parseObject for the current user to host a game.
+                    final TagGame game = new TagGame();
+                    game.setUser( ParseUser.getCurrentUser().getString("username"));
+                    game.setTime( MINUTES);
+                    game.setRadious( GAME_RADIUS);
+                    game.setTagRadious(TAG_RADIUS);
+                    game.setTagLimit( TAG_LIMIT);
+                    game.setLocation( geoPoint);
+
+                    game.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                //Saves the game settings data and game objectId to key that
+                                // can be accessed by the activity (InGameLobbyActivity??)
+                                // that follows.
+                                final String gameObjectId = game.getObjectId();
+                                final Intent toLobby = new Intent(GameSettingsActivity.this,
+                                        MainLobbyActivity.class);
+                                toLobby.putExtra("gameObjectId", gameObjectId);
+
+                                //Creates ActiveUser parseObject and relates it to Game parseObject
+                                final ActiveUsers activeUser = new ActiveUsers();
+                                activeUser.setUserId(ParseUser.getCurrentUser().getUsername());
+                                activeUser.setGameId( gameObjectId);
+
+                                activeUser.saveInBackground(new SaveCallback() {
+                                    @Override
+                                    public void done(ParseException e) {
+                                        if (e == null) {
+                                            //Saves the ActiveUsers objectId to keys that can be
+                                            // accessed by the activity (InGameLobbyActivity??)
+                                            // that follows.
+                                            String activeUserObjectId = activeUser.getObjectId();
+                                            toLobby.putExtra("activeUserObjectId", activeUserObjectId);
+                                            startActivity(toLobby);
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                } else {
+                    //Can not get current location - Advise User
+                    Toast.makeText(GameSettingsActivity.this, "Can not find GPS location.", Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -198,6 +234,7 @@ public class GameSettingsActivity extends Activity {
             }
         });
     }
+
     /*
         //Allow the user to back out through the settings menu
         public boolean onCreateOptionsMenu(Menu menu) {
