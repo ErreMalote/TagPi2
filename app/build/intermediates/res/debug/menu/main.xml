@@ -5,5 +5,10 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/action_settings"/>
+    <item
+        android:id="@+id/action_logout"
+        android:orderInCategory="99"
+        android:showAsAction="never"
+        android:title="@string/logout_full"/>
 
 </menu><!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/menu/main.xml -->

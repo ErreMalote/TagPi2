@@ -17,6 +17,7 @@ public class TagGame extends ParseObject {
     public int getRadious() {
         return getInt("gameRadius");
     }
+
     public void setRadious(int value) {
         put("gameRadius", value);
     }
@@ -29,17 +30,29 @@ public class TagGame extends ParseObject {
         put("host_user", value);
     }
 
-    public long getTime() {return getLong("gameDuration"); }
+    public long getTime() {
+        return getLong("gameDuration");
+    }
 
-    public void setTime(long value) { put("gameDuration", value);}
+    public void setTime(long value) {
+        put("gameDuration", value);
+    }
 
-    public int getTagLimit() {return getInt("tagLimit"); }
+    public int getTagLimit() {
+        return getInt("tagLimit");
+    }
 
-    public void setTagLimit(int value) { put("TagLimit", value);}
+    public void setTagLimit(int value) {
+        put("TagLimit", value);
+    }
 
-    public int getTagRadious() {return getInt("tagRadius"); }
+    public int getTagRadious() {
+        return getInt("tagRadius");
+    }
 
-    public void setTagRadious(int value) { put("TagRadius", value);}
+    public void setTagRadious(int value) {
+        put("TagRadius", value);
+    }
 
     public ParseGeoPoint getLocation() {
         return getParseGeoPoint("location");

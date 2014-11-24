@@ -285,7 +285,7 @@
     <string name="game_lobby">Game Lobby</string>
     <string name="gameplay_radius">Game Radius</string>
     <string name="login">Log in</string>
-    <string name="logout_full">Log out of PiTag</string>
+    <string name="logout_full">Log out</string>
     <string name="mainLobbyTitle">Active Games</string>
     <string name="main_lobby">Main Lobby</string>
     <string name="mapsAPIkeyV2">AIzaSyCcOfnoul8Lpu0w0kmBh3cUaKDRM2ZxaS4</string>

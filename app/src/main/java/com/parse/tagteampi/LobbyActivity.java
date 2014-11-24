@@ -48,10 +48,10 @@ public class LobbyActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
         //retrieve all set values from the game settings screen and display rules to the player
-        GAME_RADIUS = this.getIntent().getExtras().getInt("GAME_RADIUS");
-        TAG_RADIUS = this.getIntent().getExtras().getInt("TAG_RADIUS");
-        TAG_LIMIT = this.getIntent().getExtras().getInt("TAG_LIMIT");
-        MINUTES = this.getIntent().getExtras().getInt("MINUTES");
+        //GAME_RADIUS = this.getIntent().getExtras().getInt("GAME_RADIUS");
+        //TAG_RADIUS = this.getIntent().getExtras().getInt("TAG_RADIUS");
+        //TAG_LIMIT = this.getIntent().getExtras().getInt("TAG_LIMIT");
+        //MINUTES = this.getIntent().getExtras().getInt("MINUTES");
         //----------------------temp bogey array--------------------------//
         bogey = new ArrayList<String>();
         bogey.add("Ron");
