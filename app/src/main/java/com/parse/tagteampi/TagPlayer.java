@@ -10,6 +10,7 @@ import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+
 import java.util.Date;
 import java.util.List;
 
@@ -21,27 +22,54 @@ import java.util.List;
 @ParseClassName("Player")
 public class TagPlayer extends ParseObject {
     // gameId
-    public String getGame() { return getString("gameId"); }
-    public void setGame(String value) { put("gameId", value); } // testing only, should be handled automatically
+    public String getGame() {
+        return getString("gameId");
+    }
+
+    public void setGame(String value) {
+        put("gameId", value);
+    } // testing only, should be handled automatically
+
     // playerId
     public ParseUser getPlayer() {
         return getParseUser("playerId");
     }
-    public void setPlayer(ParseUser value) { put("playerId", value.getUsername()); }
+
+    public void setPlayer(ParseUser value) {
+        put("playerId", value.getUsername());
+    }
+
     // location
     public ParseGeoPoint getLocation() {
         return getParseGeoPoint("location");
     }
+
     public void setLocation(ParseGeoPoint value) {
         put("location", value);
     }
+
     // tagCount
-    public int getTagCount() { return getInt("tagCount"); }
-    public void setTagCount(int value) { put("tagCount", value);}
+    public int getTagCount() {
+        return getInt("tagCount");
+    }
+
+    public void setTagCount(int value) {
+        put("tagCount", value);
+    }
+
     // itt
-    public boolean isItt() { return getBoolean("itt"); }
-    public void setItt() { put("itt", true); }
-    public void setNotItt() { put("itt", false); }
+    public boolean isItt() {
+        return getBoolean("itt");
+    }
+
+    public void setItt() {
+        put("itt", true);
+    }
+
+    public void setNotItt() {
+        put("itt", false);
+    }
+
     public void tagItt(String gameId, ParseUser player) {
         final String taggedplayer = player.getUsername();
 
@@ -67,9 +95,14 @@ public class TagPlayer extends ParseObject {
     }
 
     // createdAt
-    public Date getCreatedAt() { return getDate("createdAt"); }
+    public Date getCreatedAt() {
+        return getDate("createdAt");
+    }
+
     // updatedAt
-    public Date getUpdatedAt() { return getDate("updatedAt"); }
+    public Date getUpdatedAt() {
+        return getDate("updatedAt");
+    }
 
     public static ParseQuery<TagPlayer> getQuery() {
         return ParseQuery.getQuery(TagPlayer.class);

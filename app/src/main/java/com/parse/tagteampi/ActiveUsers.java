@@ -11,13 +11,21 @@ import com.parse.ParseQuery;
 @ParseClassName("ActiveUsers")
 public class ActiveUsers extends ParseObject {
 
-    public void setUserId(String value) { put("userId", value);}
+    public void setUserId(String value) {
+        put("userId", value);
+    }
 
-    public String getUserId() {return getString("userId"); }
+    public String getUserId() {
+        return getString("userId");
+    }
 
-    public void setGameId(String value) { put("gameId", value);}
+    public void setGameId(String value) {
+        put("gameId", value);
+    }
 
-    public String getGameId() {return getString("gameId"); }
+    public String getGameId() {
+        return getString("gameId");
+    }
 
     public static ParseQuery<ActiveUsers> getQuery() {
         return ParseQuery.getQuery(ActiveUsers.class);

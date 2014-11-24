@@ -24,7 +24,6 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 
-
 public class GameSettingsActivity extends Activity {
     private NumberPicker gameRadiusNumberPicker;
     private RadioGroup tagRadiusRadioGroup;
@@ -66,7 +65,7 @@ public class GameSettingsActivity extends Activity {
 
                 //LocationManager used to get the current location of the user.  Will be used for
                 //setting the center of the game play area.
-                LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
                 Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                 if (lastLocation != null) {
@@ -78,12 +77,12 @@ public class GameSettingsActivity extends Activity {
 
                     //Creates Game parseObject for the current user to host a game.
                     final TagGame game = new TagGame();
-                    game.setUser( ParseUser.getCurrentUser().getString("username"));
-                    game.setTime( MINUTES);
-                    game.setRadious( GAME_RADIUS);
+                    game.setUser(ParseUser.getCurrentUser().getString("username"));
+                    game.setTime(MINUTES);
+                    game.setRadious(GAME_RADIUS);
                     game.setTagRadious(TAG_RADIUS);
-                    game.setTagLimit( TAG_LIMIT);
-                    game.setLocation( geoPoint);
+                    game.setTagLimit(TAG_LIMIT);
+                    game.setLocation(geoPoint);
 
                     game.saveInBackground(new SaveCallback() {
                         @Override
@@ -100,7 +99,7 @@ public class GameSettingsActivity extends Activity {
                                 //Creates ActiveUser parseObject and relates it to Game parseObject
                                 final ActiveUsers activeUser = new ActiveUsers();
                                 activeUser.setUserId(ParseUser.getCurrentUser().getUsername());
-                                activeUser.setGameId( gameObjectId);
+                                activeUser.setGameId(gameObjectId);
 
                                 activeUser.saveInBackground(new SaveCallback() {
                                     @Override
@@ -128,8 +127,8 @@ public class GameSettingsActivity extends Activity {
         //Initialize the gameplay radius number picker
         gameRadiusNumberPicker = (NumberPicker) findViewById(R.id.gpRadius);
         //Make picking a radius a little bit easier :)
-        for(int i=0; i<38; i++) //start at i=2 to start at 150
-            RADIUS_INTERVALS[i] = String.valueOf(PICKER_RANGE * (i+3));
+        for (int i = 0; i < 38; i++) //start at i=2 to start at 150
+            RADIUS_INTERVALS[i] = String.valueOf(PICKER_RANGE * (i + 3));
 
         //Maximum and minimum values for the number picker
         gameRadiusNumberPicker.setMaxValue(37);
@@ -147,7 +146,7 @@ public class GameSettingsActivity extends Activity {
         });
 
         //Initialize the tag limit button group
-        tagLimitGroup = (RadioGroup)  findViewById(R.id.limit_radiogroup);
+        tagLimitGroup = (RadioGroup) findViewById(R.id.limit_radiogroup);
         tagLimitGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -271,11 +270,10 @@ public class GameSettingsActivity extends Activity {
         RadioButton button = (RadioButton) findViewById(buttonId);
         String buttonText = button.getText().toString();
         TAG_LIMIT = Integer.parseInt(buttonText);
-        if(TAG_LIMIT == 0) {
-            if(MINUTES == 0)
+        if (TAG_LIMIT == 0) {
+            if (MINUTES == 0)
                 apply.setClickable(false);
-        }
-        else //at least one condition met for game rules
+        } else //at least one condition met for game rules
             apply.setClickable(true);
     }
 

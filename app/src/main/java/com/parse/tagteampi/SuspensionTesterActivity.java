@@ -21,7 +21,7 @@ import com.parse.SaveCallback;
 
 import java.util.List;
 
-public class SuspensionTesterActivity extends Activity{
+public class SuspensionTesterActivity extends Activity {
 
     // GPS
     protected LocationManager locMan;
@@ -84,8 +84,6 @@ public class SuspensionTesterActivity extends Activity{
             }
 
 
-
-
             tickHandler.postDelayed(this, 1000);
         }
     };
@@ -119,7 +117,7 @@ public class SuspensionTesterActivity extends Activity{
         });
 
         // Wait for game to be created so player doesn't try to use a null value
-        while (gameData.getObjectId() == null){
+        while (gameData.getObjectId() == null) {
             // Here we sit until gameData gets its act together
         }
 
@@ -152,8 +150,6 @@ public class SuspensionTesterActivity extends Activity{
         radio.setText("Tick");
 
         tickHandler.postDelayed(tickRunnable, 1000);
-
-
 
 
     }

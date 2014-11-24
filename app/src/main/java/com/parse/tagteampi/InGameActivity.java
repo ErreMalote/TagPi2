@@ -925,8 +925,8 @@ public class InGameActivity extends FragmentActivity implements LocationListener
 
 */
 /**
-     * Default constructor. Sets the dialog field to null
-     *//*
+ * Default constructor. Sets the dialog field to null
+ *//*
 */
 /*
 
