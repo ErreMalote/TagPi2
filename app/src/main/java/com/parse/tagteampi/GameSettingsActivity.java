@@ -15,6 +15,7 @@ import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
+
 import java.lang.String;
 
 
@@ -66,8 +67,8 @@ public class GameSettingsActivity extends Activity {
         //Initialize the gameplay radius number picker
         gameRadiusNumberPicker = (NumberPicker) findViewById(R.id.gpRadius);
         //Make picking a radius a little bit easier :)
-        for(int i=0; i<38; i++) //start at i=2 to start at 150
-            RADIUS_INTERVALS[i] = String.valueOf(PICKER_RANGE * (i+3));
+        for (int i = 0; i < 38; i++) //start at i=2 to start at 150
+            RADIUS_INTERVALS[i] = String.valueOf(PICKER_RANGE * (i + 3));
 
         //Maximum and minimum values for the number picker
         gameRadiusNumberPicker.setMaxValue(37);
@@ -85,7 +86,7 @@ public class GameSettingsActivity extends Activity {
         });
 
         //Initialize the tag limit button group
-        tagLimitGroup = (RadioGroup)  findViewById(R.id.limit_radiogroup);
+        tagLimitGroup = (RadioGroup) findViewById(R.id.limit_radiogroup);
         tagLimitGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
@@ -172,6 +173,7 @@ public class GameSettingsActivity extends Activity {
             }
         });
     }
+
     /*
         //Allow the user to back out through the settings menu
         public boolean onCreateOptionsMenu(Menu menu) {
@@ -208,11 +210,10 @@ public class GameSettingsActivity extends Activity {
         RadioButton button = (RadioButton) findViewById(buttonId);
         String buttonText = button.getText().toString();
         TAG_LIMIT = Integer.parseInt(buttonText);
-        if(TAG_LIMIT == 0) {
-            if(MINUTES == 0)
+        if (TAG_LIMIT == 0) {
+            if (MINUTES == 0)
                 apply.setClickable(false);
-        }
-        else //at least one condition met for game rules
+        } else //at least one condition met for game rules
             apply.setClickable(true);
     }
 

@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -12,10 +13,11 @@ import android.widget.ListView;
 
 
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 
 /**
  * Created by Reynaldo on 11/21/2014.
-*/
+ */
 public class MainLobbyActivity extends Activity {
 
     private ListView list;
@@ -46,20 +48,39 @@ public class MainLobbyActivity extends Activity {
 
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position,long id) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(getApplicationContext(), "You clicked on # " + position, Toast.LENGTH_SHORT).show();
 
                 String gameSelected = adapter2.getItem(position).get("name").toString();
 
 
                 // go to the selected game
-                Intent goToGame = new Intent(MainLobbyActivity.this , InGameActivity.class);
+                Intent goToGame = new Intent(MainLobbyActivity.this, InGameActivity.class);
                 goToGame.putExtra("gameSelected", gameSelected);
                 startActivity(goToGame);
             }
         });
 
 
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_logout:
+                ParseUser.logOut();
+                Intent i = new Intent(this, DispatchActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(i);
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 }

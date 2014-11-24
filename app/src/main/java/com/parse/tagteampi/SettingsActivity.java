@@ -20,54 +20,54 @@ import java.util.List;
  */
 public class SettingsActivity extends Activity {
 
-  private List<Float> availableOptions = Application.getConfigHelper().getSearchDistanceAvailableOptions();
+    private List<Float> availableOptions = Application.getConfigHelper().getSearchDistanceAvailableOptions();
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_settings);
 
-    float currentSearchDistance = Application.getSearchDistance();
-    if (!availableOptions.contains(currentSearchDistance)) {
-      availableOptions.add(currentSearchDistance);
+        float currentSearchDistance = Application.getSearchDistance();
+        if (!availableOptions.contains(currentSearchDistance)) {
+            availableOptions.add(currentSearchDistance);
+        }
+        Collections.sort(availableOptions);
+
+        // The search distance choices
+        RadioGroup searchDistanceRadioGroup = (RadioGroup) findViewById(R.id.searchdistance_radiogroup);
+
+        for (int index = 0; index < availableOptions.size(); index++) {
+            float searchDistance = availableOptions.get(index);
+
+            RadioButton button = new RadioButton(this);
+            button.setId(index);
+            button.setText(getString(R.string.settings_distance_format, (int) searchDistance));
+            searchDistanceRadioGroup.addView(button, index);
+
+            if (currentSearchDistance == searchDistance) {
+                searchDistanceRadioGroup.check(index);
+            }
+        }
+
+        // Set up the selection handler to save the selection to the application
+        searchDistanceRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                Application.setSearchDistance(availableOptions.get(checkedId));
+            }
+        });
+
+        // Set up the log out button click handler
+        Button logoutButton = (Button) findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                // Call the Parse log out method
+                ParseUser.logOut();
+                // Start and intent for the dispatch activity
+                Intent intent = new Intent(SettingsActivity.this, DispatchActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
     }
-    Collections.sort(availableOptions);
-
-    // The search distance choices
-    RadioGroup searchDistanceRadioGroup = (RadioGroup) findViewById(R.id.searchdistance_radiogroup);
-
-    for (int index = 0; index < availableOptions.size(); index++) {
-      float searchDistance = availableOptions.get(index);
-
-      RadioButton button = new RadioButton(this);
-      button.setId(index);
-      button.setText(getString(R.string.settings_distance_format, (int)searchDistance));
-      searchDistanceRadioGroup.addView(button, index);
-
-      if (currentSearchDistance == searchDistance) {
-        searchDistanceRadioGroup.check(index);
-      }
-    }
-
-    // Set up the selection handler to save the selection to the application
-    searchDistanceRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-      public void onCheckedChanged(RadioGroup group, int checkedId) {
-        Application.setSearchDistance(availableOptions.get(checkedId));
-      }
-    });
-
-    // Set up the log out button click handler
-    Button logoutButton = (Button) findViewById(R.id.logout_button);
-    logoutButton.setOnClickListener(new OnClickListener() {
-      public void onClick(View v) {
-        // Call the Parse log out method
-        ParseUser.logOut();
-        // Start and intent for the dispatch activity
-        Intent intent = new Intent(SettingsActivity.this, DispatchActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-      }
-    });
-  }
 }

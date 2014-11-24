@@ -23,97 +23,97 @@ import com.parse.SaveCallback;
  * Activity which displays a login screen to the user, offering registration as well.
  */
 public class PostActivity extends Activity {
-  // UI references.
-  private EditText postEditText;
-  private TextView characterCountTextView;
-  private Button postButton;
+    // UI references.
+    private EditText postEditText;
+    private TextView characterCountTextView;
+    private Button postButton;
 
-  private int maxCharacterCount = Application.getConfigHelper().getPostMaxCharacterCount();
-  private ParseGeoPoint geoPoint;
+    private int maxCharacterCount = Application.getConfigHelper().getPostMaxCharacterCount();
+    private ParseGeoPoint geoPoint;
 
-  @Override
-  protected void onCreate(Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    setContentView(R.layout.activity_post);
+        setContentView(R.layout.activity_post);
 
-    Intent intent = getIntent();
-    Location location = intent.getParcelableExtra(Application.INTENT_EXTRA_LOCATION);
-    geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
+        Intent intent = getIntent();
+        Location location = intent.getParcelableExtra(Application.INTENT_EXTRA_LOCATION);
+        geoPoint = new ParseGeoPoint(location.getLatitude(), location.getLongitude());
 
-    postEditText = (EditText) findViewById(R.id.post_edittext);
-    postEditText.addTextChangedListener(new TextWatcher() {
-      @Override
-      public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-      }
+        postEditText = (EditText) findViewById(R.id.post_edittext);
+        postEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            }
 
-      @Override
-      public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-      }
+            @Override
+            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+            }
 
-      @Override
-      public void afterTextChanged(Editable s) {
+            @Override
+            public void afterTextChanged(Editable s) {
+                updatePostButtonState();
+                updateCharacterCountTextViewText();
+            }
+        });
+
+        characterCountTextView = (TextView) findViewById(R.id.character_count_textview);
+
+        postButton = (Button) findViewById(R.id.post_button);
+        postButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                post();
+            }
+        });
+
         updatePostButtonState();
         updateCharacterCountTextViewText();
-      }
-    });
+    }
 
-    characterCountTextView = (TextView) findViewById(R.id.character_count_textview);
+    private void post() {
+        String text = postEditText.getText().toString().trim();
 
-    postButton = (Button) findViewById(R.id.post_button);
-    postButton.setOnClickListener(new OnClickListener() {
-      public void onClick(View v) {
-        post();
-      }
-    });
+        // Set up a progress dialog
+        final ProgressDialog dialog = new ProgressDialog(PostActivity.this);
+        dialog.setMessage(getString(R.string.progress_post));
+        dialog.show();
 
-    updatePostButtonState();
-    updateCharacterCountTextViewText();
-  }
+        // Create a post.
+        AnywallPost post = new AnywallPost();
 
-  private void post () {
-    String text = postEditText.getText().toString().trim();
+        // Set the location to the current user's location
+        post.setLocation(geoPoint);
+        post.setText(text);
+        post.setUser(ParseUser.getCurrentUser());
+        ParseACL acl = new ParseACL();
 
-    // Set up a progress dialog
-    final ProgressDialog dialog = new ProgressDialog(PostActivity.this);
-    dialog.setMessage(getString(R.string.progress_post));
-    dialog.show();
+        // Give public read access
+        acl.setPublicReadAccess(true);
+        post.setACL(acl);
 
-    // Create a post.
-    AnywallPost post = new AnywallPost();
+        // Save the post
+        post.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                dialog.dismiss();
+                finish();
+            }
+        });
+    }
 
-    // Set the location to the current user's location
-    post.setLocation(geoPoint);
-    post.setText(text);
-    post.setUser(ParseUser.getCurrentUser());
-    ParseACL acl = new ParseACL();
+    private String getPostEditTextText() {
+        return postEditText.getText().toString().trim();
+    }
 
-    // Give public read access
-    acl.setPublicReadAccess(true);
-    post.setACL(acl);
+    private void updatePostButtonState() {
+        int length = getPostEditTextText().length();
+        boolean enabled = length > 0 && length < maxCharacterCount;
+        postButton.setEnabled(enabled);
+    }
 
-    // Save the post
-    post.saveInBackground(new SaveCallback() {
-      @Override
-      public void done(ParseException e) {
-        dialog.dismiss();
-        finish();
-      }
-    });
-  }
-
-  private String getPostEditTextText () {
-    return postEditText.getText().toString().trim();
-  }
-
-  private void updatePostButtonState () {
-    int length = getPostEditTextText().length();
-    boolean enabled = length > 0 && length < maxCharacterCount;
-    postButton.setEnabled(enabled);
-  }
-
-  private void updateCharacterCountTextViewText () {
-    String characterCountString = String.format("%d/%d", postEditText.length(), maxCharacterCount);
-    characterCountTextView.setText(characterCountString);
-  }
+    private void updateCharacterCountTextViewText() {
+        String characterCountString = String.format("%d/%d", postEditText.length(), maxCharacterCount);
+        characterCountTextView.setText(characterCountString);
+    }
 }
