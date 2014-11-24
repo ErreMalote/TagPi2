@@ -3,6 +3,7 @@ package com.parse.tagteampi;
 import android.app.Activity;
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +33,9 @@ public class MainLobbyActivity extends Activity {
     private ListView listView;
     private Button createGame;
     private ArrayList<String> arr = new ArrayList<String>();
+    private String gameId;
+    private int loc;
+
 
     //private Button suspensionTestButton;
 
@@ -80,7 +84,7 @@ public class MainLobbyActivity extends Activity {
 
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 Toast.makeText(getApplicationContext(), "Hii" + position, Toast.LENGTH_SHORT).show();
 
                 // class name
@@ -89,40 +93,30 @@ public class MainLobbyActivity extends Activity {
                 //Creates ActiveUser parseObject and relates it to Game parseObject
                 final ActiveUsers activeUser = new ActiveUsers();
                 activeUser.setUserId(ParseUser.getCurrentUser().getUsername());
-                /*
-                activeUser.setGameId(createdGames.findInBackground(new FindCallback<ParseObject>() {
-                    @Override
-                    public String done(List<ParseObject> list, ParseException e) {
-                        for (int i = 0; i < list.size(); i++) {
-                            if(list.get(i).getString("host_user").equals(gameName)){
-                                return list.get(i).getObjectId();
-                            }else{
-                                return "";
-                            }
-                        }
-                    };
-                }));
-
-                activeUser.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
+                loc = position;
+                createdGames.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(final List<ParseObject> gameList, ParseException e) {
                         if (e == null) {
-                            //Saves the ActiveUsers objectId to keys that can be
-                            // accessed by the activity (InGameLobbyActivity??)
-                            // that follows.
-                            String activeUserObjectId = activeUser.getObjectId();
-                            toLobby.putExtra("activeUserObjectId", activeUserObjectId);
-                            startActivity(toLobby);
+
+                            // Results were successfully found from the local datastore.
+                            for (int i = 0; i < gameList.size(); i++) {
+                                if( gameList.get(i).getString("host_user").equalsIgnoreCase(arr.get(loc))){
+                                    activeUser.setGameId(gameList.get(i).getObjectId());
+                                }
+                            }
+                        } else {
+                            Log.d("error", "Sean has played " + " games");
+                            // There was an error.
                         }
                     }
                 });
-                Intent i = new Intent(MainLobbyActivity.this, LobbyActivity.class);
 
-                startActivity(i);*/
+
+                final Intent toGame = new Intent(getBaseContext(), LobbyActivity.class);
+                startActivity(toGame);
+
             }
         });
-
-
     }
 
     @Override

@@ -93,7 +93,7 @@ public class GameSettingsActivity extends Activity {
                                 // that follows.
                                 final String gameObjectId = game.getObjectId();
                                 final Intent toLobby = new Intent(GameSettingsActivity.this,
-                                        MainLobbyActivity.class);
+                                        LobbyActivity.class);
                                 toLobby.putExtra("gameObjectId", gameObjectId);
 
                                 //Creates ActiveUser parseObject and relates it to Game parseObject
