@@ -103,7 +103,7 @@ public class LoginActivity extends Activity {
         } else {
             Intent intent = new Intent(LoginActivity.this, DispatchActivity.class);
 
-            intent.addFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK | intent.FLAG_ACTIVITY_CLEAR_TOP | intent.FLAG_ACTIVITY_NO_HISTORY);
 
           startActivity(intent);
             finish();
