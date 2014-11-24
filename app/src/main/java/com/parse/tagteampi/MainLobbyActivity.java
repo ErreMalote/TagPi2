@@ -21,6 +21,8 @@ public class MainLobbyActivity extends Activity {
     private ListView list;
     private Button createGame;
 
+    private Button suspensionTestButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +39,16 @@ public class MainLobbyActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(getBaseContext(), GameSettingsActivity.class);
+                startActivity(i);
+            }
+        });
+
+        suspensionTestButton = (Button) findViewById(R.id.button_test_suspension);
+
+        suspensionTestButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getBaseContext(), SuspensionTesterActivity.class);
                 startActivity(i);
             }
         });

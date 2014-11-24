@@ -91,6 +91,12 @@
             android:name=".MainLobbyActivity"
             android:label="@string/app_name" />
 
+        <!-- Test Activities, remove when unneeded -->
+
+        <activity
+            android:name=".SuspensionTesterActivity"
+            android:label="Fake Game to Test Suspensions" />
+
         <!--  Old activities, only there for reference-->
         <!--<activity-->
             <!--android:name=".InGameActivity"-->
@@ -101,6 +107,8 @@
             <!--android:name="com.parse.tagteampi.PostActivity"-->
             <!--android:label="@string/activity_post_title"-->
             <!--android:windowSoftInputMode="adjustResize" />-->
+
+
 
     </application>
 
