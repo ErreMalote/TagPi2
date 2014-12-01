@@ -122,6 +122,7 @@ public class MainLobbyActivity extends Activity {
                     player1.setGame(arr1.get(position));
                     player1.setLocation(geoPoint);
                     player1.setTagCount(0);
+                    player1.setNotItt();
                     toGame.putExtra("gameObjectId", arr1.get(position));
                     player1.saveInBackground(new SaveCallback() {
                         @Override

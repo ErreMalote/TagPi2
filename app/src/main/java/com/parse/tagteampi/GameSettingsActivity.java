@@ -111,6 +111,7 @@ public class GameSettingsActivity extends Activity {
                                 player.setLocation(geoPoint);
                                 player.setAvatar(TagPlayer.getAvatarNumber(AVATAR));
                                 player.setTagCount(0);
+                                player.setNotItt();
 
                                 player.saveInBackground(new SaveCallback() {
                                     @Override

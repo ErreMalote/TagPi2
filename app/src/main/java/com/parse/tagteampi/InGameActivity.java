@@ -201,14 +201,17 @@ public class InGameActivity extends FragmentActivity implements LocationListener
                 TextView contentView = (TextView) view.findViewById(R.id.content_view);
                 TextView usernameView = (TextView) view.findViewById(R.id.username_view);
                 contentView.setText(player.getPlayer());
-                usernameView.setText("not itt");
-
+                if(player.isItt()) {
+                    usernameView.setText("itt");
+                }else{
+                    usernameView.setText("Not itt");
+                }
                 return view;
             }
         };
 
         // Disable automatic loading when the adapter is attached to a view.
-        postsQueryAdapter.setAutoload(true);
+        postsQueryAdapter.setAutoload(false);
 
         // Disable pagination, we'll manage the query limit ourselves
         postsQueryAdapter.setPaginationEnabled(false);
@@ -316,13 +319,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         // Checks the last saved location to show cached data if it's available
         if (lastLocation != null) {
             LatLng myLatLng = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+            LatLng circleLatLng = new LatLng(centerCircle.getLatitude(),centerCircle.getLongitude());
             // If the search distance preference has been changed, move
             // map to new bounds.
             if (lastRadius != radius) {
                 updateZoom(myLatLng);
             }
             // Update the circle map
-            updateCircle(myLatLng);
+            updateCircle(circleLatLng);
         }
         // Save the current radius
         lastRadius = radius;
@@ -465,13 +469,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         }
         lastLocation = location;
         LatLng myLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        LatLng circleLatLng = new LatLng(centerCircle.getLatitude(),centerCircle.getLongitude());
         if (!hasSetUpInitialLocation) {
             // Zoom to the current location.
             updateZoom(myLatLng);
             hasSetUpInitialLocation = true;
         }
         // Update map radius indicator
-        updateCircle(myLatLng);
+        updateCircle(circleLatLng);
         doMapQuery();
         doListQuery();
     }
@@ -595,9 +600,55 @@ public class InGameActivity extends FragmentActivity implements LocationListener
                             }
                         }
 
-                        markerOpts = markerOpts
-                                .title(String.valueOf(post.getPlayer()))
-                                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+                        if(post.getAvatar() == 1) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_crab));
+
+                        }
+
+                        if(post.getAvatar() == 2) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_jellyfish));
+                        }
+
+                        if(post.getAvatar() == 3) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_octopus));
+                        }
+
+                        if(post.getAvatar() == 4) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_seahorse));
+                        }
+
+                        if(post.getAvatar() == 5) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_sponge));
+                        }
+
+                        if(post.getAvatar() == 6) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_starfish));
+                        }
+
+                        if(post.getAvatar() == 7) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_this_is_bait));
+                        }
+
+                        if(post.getAvatar() == 8) {
+                            markerOpts = markerOpts
+                                    .title(String.valueOf(post.getPlayer()))
+                                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.orange_turtle));
+                        }
                     }
 
                     // Set up the marker properties based on if it is within the search radius
@@ -647,7 +698,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         if (mapCircle == null) {
             mapCircle =
                     mapFragment.getMap().addCircle(
-                            new CircleOptions().center(myLatLng).radius(radius * METERS_PER_FEET));
+                            new CircleOptions().center(myLatLng ).radius(radius * METERS_PER_FEET));
             int baseColor = Color.DKGRAY;
             mapCircle.setStrokeColor(baseColor);
             mapCircle.setStrokeWidth(2);
@@ -810,4 +861,44 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             return mDialog;
         }
     }
+
+    /*
+    private void autoTag(String gameObjectId, ParseUser currentUser) {
+        final String gameIdFinal = gameObjectId;
+        final ParseUser thisUser = currentUser;
+        final ParseGeoPoint location = currentUser.getParseGeoPoint("location");
+        final ParseQuery<ParseObject> self = ParseQuery.getQuery("Player");
+        self.whereEqualTo("PlayerId", currentUser.getUsername());
+        self.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> parseObjects, ParseException e) {
+                //query Parse for all players with a gameID equal to the current game's
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("Player");
+                query.whereEqualTo("gameId", gameIdFinal);
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    public void done(List<ParseObject> playerList, ParseException e) {
+                        if (e == null) {
+                            Log.d("score", "Player retrieved: " + playerList.size());
+                            ParseObject taggedPlayer = null;
+                            double lowDistance = radius;
+                            for(ParseObject player: playerList) {
+                                double distance = (1000 * player.getParseGeoPoint("location").distanceInKilometersTo(location));
+                                if(distance > 0 && distance <= lowDistance) {
+                                    taggedPlayer = player;
+                                    lowDistance = distance;
+                                }
+                                if(taggedPlayer != null) {
+                                    player.put("Itt", true);
+                                    thisUser.put("Itt", false);
+                                }
+
+                            }
+                        } else {
+                            Log.d("score", "Error: " + e.getMessage());
+                        }
+                    }
+                });
+            }
+        });
+     */
 }
