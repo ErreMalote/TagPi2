@@ -436,6 +436,7 @@ int drawable ic_plusone_tall_off_client 0x7f020056
 int drawable login_box 0x7f020057
 int drawable powered_by_google_dark 0x7f020058
 int drawable powered_by_google_light 0x7f020059
+int drawable red_shark_icon 0x7f02005a
 int id GamesListView 0x7f09007b
 int id LinearLayout1 0x7f090075
 int id action_bar 0x7f090044

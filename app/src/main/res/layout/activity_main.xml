@@ -21,7 +21,7 @@
     <ListView
         android:id="@+id/posts_listview"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="300dp"
         android:layout_weight="1" />
 
 </LinearLayout>

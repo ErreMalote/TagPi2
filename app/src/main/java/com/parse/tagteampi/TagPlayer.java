@@ -31,12 +31,12 @@ public class TagPlayer extends ParseObject {
     } // testing only, should be handled automatically
 
     // playerId
-    public ParseUser getPlayer() {
-        return getParseUser("playerId");
+    public String getPlayer() {
+        return getString("playerId");
     }
 
-    public void setPlayer(ParseUser value) {
-        put("playerId", value.getUsername());
+    public void setPlayer(String value) {
+        put("playerId", value);
     }
 
     // location
@@ -80,11 +80,11 @@ public class TagPlayer extends ParseObject {
                 if (e == null) {
                     Log.d("gameId", "Retrieved " + tp.size() + "players.\n");
                     for (int i = 0; i < tp.size(); i++) {
-                        if (tp.get(i).getPlayer().getUsername().equals(taggedplayer)) {
-                            tp.get(i).getPlayer().put("itt", true); // Tag, you're itt!
+                        if (tp.get(i).getPlayer().equals(taggedplayer)) {
+                            tp.get(i).put("itt", true); // Tag, you're itt!
                             Log.d("playerId", "Tagged " + tp.get(i).getPlayer() + "\n");
                         } else {
-                            tp.get(i).getPlayer().put("itt", false);// Not itt!
+                            tp.get(i).put("itt", false);// Not itt!
                         }
                     }
                 } else {

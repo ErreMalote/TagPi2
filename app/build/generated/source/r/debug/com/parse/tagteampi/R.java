@@ -1661,6 +1661,7 @@ containing a value of this type.
         public static final int login_box=0x7f020057;
         public static final int powered_by_google_dark=0x7f020058;
         public static final int powered_by_google_light=0x7f020059;
+        public static final int red_shark_icon=0x7f02005a;
     }
     public static final class id {
         public static final int GamesListView=0x7f09007b;

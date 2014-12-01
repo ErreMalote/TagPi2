@@ -1,29 +1,40 @@
 package com.parse.tagteampi;
 
 import android.app.Activity;
+import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Reynaldo on 11/21/2014.
@@ -32,7 +43,12 @@ public class MainLobbyActivity extends Activity {
 
     private ListView listView;
     private Button createGame;
+    private double latitude;
+    private double longitude;
+    // Adapter for the Parse query
+    private ParseQueryAdapter<TagGame> gamesQueryAdapter;
     private ArrayList<String> arr = new ArrayList<String>();
+    private ArrayList<String> arr1 = new ArrayList<String>();
     private String gameId;
     private int loc;
 
@@ -67,16 +83,25 @@ public class MainLobbyActivity extends Activity {
         });
 */
         //Listview stuff
-        final ParseQuery<ParseObject> createdGames = ParseQuery.getQuery("Game");
+        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        createdGames.findInBackground(new FindCallback<ParseObject>() {
+        latitude = lastLocation.getLatitude();
+        longitude = lastLocation.getLongitude();
+
+        final ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
+
+        ParseQuery<TagGame> gamesQuery = ParseQuery.getQuery("Game");
+
+
+        gamesQuery.findInBackground(new FindCallback<TagGame>() {
             @Override
-            public void done(List<ParseObject> list, ParseException e) {
-                for (int i = 0; i < list.size(); i++) {
-                    arr.add(list.get(i).getString("host_user"));
+            public void done(List<TagGame> list, ParseException e) {
+                for (TagGame aList : list) {
+                    arr.add(aList.getUser());
+                    arr1.add(aList.getObjectId());
                 }
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arr);
-
                 listView.setAdapter(adapter);
             }
         });
@@ -87,33 +112,27 @@ public class MainLobbyActivity extends Activity {
             public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
                 Toast.makeText(getApplicationContext(), "Hii" + position, Toast.LENGTH_SHORT).show();
 
-                // class name
-                final String gameName = arr.get(position);
+                final Intent toGame = new Intent(getBaseContext(), InGameActivity.class);
+
 
                 //Creates ActiveUser parseObject and relates it to Game parseObject
-                final ActiveUsers activeUser = new ActiveUsers();
-                activeUser.setUserId(ParseUser.getCurrentUser().getUsername());
-                loc = position;
-                createdGames.findInBackground(new FindCallback<ParseObject>() {
-                    public void done(final List<ParseObject> gameList, ParseException e) {
+                TagPlayer player1 = new TagPlayer();
+                player1.setPlayer(ParseUser.getCurrentUser().getUsername());
+                player1.setGame(arr1.get(position));
+                player1.setLocation(geoPoint);
+                player1.setTagCount(0);
+                toGame.putExtra("gameObjectId", arr1.get(position));
+                player1.saveInBackground(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
                         if (e == null) {
+                            //Saves the TagPlayer objectId to keys that can be
 
-                            // Results were successfully found from the local datastore.
-                            for (int i = 0; i < gameList.size(); i++) {
-                                if( gameList.get(i).getString("host_user").equalsIgnoreCase(arr.get(loc))){
-                                    activeUser.setGameId(gameList.get(i).getObjectId());
-                                }
-                            }
-                        } else {
-                            Log.d("error", "Sean has played " + " games");
-                            // There was an error.
+                            startActivity(toGame);
                         }
                     }
                 });
 
-
-                final Intent toGame = new Intent(getBaseContext(), LobbyActivity.class);
-                startActivity(toGame);
 
             }
         });
@@ -138,4 +157,32 @@ public class MainLobbyActivity extends Activity {
         }
         return super.onOptionsItemSelected(item);
     }
+    /*
+    // Set up a customized query
+        ParseQueryAdapter.QueryFactory<TagGame> factory =
+                new ParseQueryAdapter.QueryFactory<TagGame>() {
+                    public ParseQuery<TagGame> create() {
+                        ParseQuery<TagGame> query = TagGame.getQuery();
+
+                        return query;
+                    }
+                };
+
+        // Set up the query adapter
+        gamesQueryAdapter = new ParseQueryAdapter<TagGame>(this, factory) {
+            @Override
+            public View getItemView(TagGame games, View view, ViewGroup parent) {
+                if (view == null) {
+                    view = View.inflate(getContext(), R.layout.anywall_post_item, null);
+                }
+                ListView contentView = (ListView) view.findViewById(R.id.GamesListView);
+                TextView usernameView = (TextView) view.findViewById(R.id.username_view);
+                contentView.setAdapter(games.getUser());
+
+                return view;
+            }
+        };
+
+*/
+
 }

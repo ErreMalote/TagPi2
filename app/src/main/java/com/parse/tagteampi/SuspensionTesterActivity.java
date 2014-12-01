@@ -130,7 +130,7 @@ public class SuspensionTesterActivity extends Activity {
         }
 
         playerData = new TagPlayer();
-        playerData.setPlayer(ParseUser.getCurrentUser());
+        playerData.setPlayer(ParseUser.getCurrentUser().getUsername());
         playerData.setGame(gameData.getObjectId());
         playerData.setLocation(new ParseGeoPoint(location.getLatitude(), location.getLongitude()));
         playerData.setTagCount(0);

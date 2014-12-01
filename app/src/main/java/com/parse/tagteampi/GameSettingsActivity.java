@@ -38,7 +38,7 @@ public class GameSettingsActivity extends Activity {
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
     private String[] RADIUS_INTERVALS = new String[38];
-    //private String USER_NAME;
+
 
 
     private double latitude;
@@ -92,24 +92,23 @@ public class GameSettingsActivity extends Activity {
                                 // can be accessed by the activity (InGameLobbyActivity??)
                                 // that follows.
                                 final String gameObjectId = game.getObjectId();
-                                final Intent toLobby = new Intent(GameSettingsActivity.this,
-                                        LobbyActivity.class);
-                                toLobby.putExtra("gameObjectId", gameObjectId);
+                                final Intent toLobby = new Intent(getBaseContext(),
+                                        InGameActivity.class);
+
 
                                 //Creates ActiveUser parseObject and relates it to Game parseObject
-                                final ActiveUsers activeUser = new ActiveUsers();
-                                activeUser.setUserId(ParseUser.getCurrentUser().getUsername());
-                                activeUser.setGameId(gameObjectId);
+                                final TagPlayer activeUser = new TagPlayer();
+                                activeUser.setPlayer(ParseUser.getCurrentUser().getUsername());
+                                activeUser.setGame(gameObjectId);
 
                                 activeUser.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            //Saves the ActiveUsers objectId to keys that can be
+                                            //Saves the TagPlayer objectId to keys that can be
                                             // accessed by the activity (InGameLobbyActivity??)
                                             // that follows.
-                                            String activeUserObjectId = activeUser.getObjectId();
-                                            toLobby.putExtra("activeUserObjectId", activeUserObjectId);
+                                            toLobby.putExtra("gameObjectId", gameObjectId);
                                             startActivity(toLobby);
                                         }
                                     }
