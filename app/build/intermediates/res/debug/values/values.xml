@@ -229,6 +229,7 @@
     <string name="activity_suspension_title">Suspension List</string>
     <string name="app_name">PiTag</string>
     <string name="apply">Apply</string>
+    <string name="avatar">Avatar</string>
     <string name="character_count_placeholder">0/140</string>
     <!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/build/intermediates/exploded-aar/com.google.android.gms/play-services/6.1.71/res/values/common_strings.xml -->
     <eat-comment/>
@@ -282,6 +283,7 @@
     <!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="exit_lobby">Exit Lobby</string>
+    <string name="gameSettings">Game Settings</string>
     <string name="game_lobby">Game Lobby</string>
     <string name="gameplay_radius">Game Radius</string>
     <string name="login">Log in</string>
@@ -291,6 +293,7 @@
     <string name="mapsAPIkeyV2">AIzaSyCcOfnoul8Lpu0w0kmBh3cUaKDRM2ZxaS4</string>
     <string name="parseApp_ID">AUGlscWFinH8OICgtncqVF5xFuGY0NIvXmjmaHjX</string>
     <string name="parseClient_ID">2itivmsVyX5Awmhdf67e89Y5Apz8sEmscCrdA4UO</string>
+    <string name="playerSettings">Player Settings</string>
     <string name="post">Post</string>
     <string name="post_out_of_range">Can\'t view post! Get closer.</string>
     <string name="powered_by">Powered by</string>
@@ -324,7 +327,7 @@
     <string name="store_picture_title">Save image</string>
     <!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/values/strings.xml -->
     <eat-comment/>
-    <string name="taglimit">Tag limit</string>
+    <string name="taglimit">Tag Limit</string>
     <string name="tagradius">Tag Radius</string>
     <string name="teamPi">teamPi</string>
     <string name="time_limit">Time Limit</string>

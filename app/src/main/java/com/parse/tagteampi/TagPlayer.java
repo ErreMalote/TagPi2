@@ -35,9 +35,7 @@ public class TagPlayer extends ParseObject {
         return getString("playerId");
     }
 
-    public void setPlayer(String value) {
-        put("playerId", value);
-    }
+    public void setPlayer(String value) { put("playerId", value); }
 
     // location
     public ParseGeoPoint getLocation() {
@@ -46,6 +44,25 @@ public class TagPlayer extends ParseObject {
 
     public void setLocation(ParseGeoPoint value) {
         put("location", value);
+    }
+
+    // avatar
+    public int getAvatar() { return getInt("avatar"); }
+
+    public void setAvatar(int value) {
+        put("avatar", value);
+    }
+
+    public static int getAvatarNumber(String nameString) {
+        if (nameString.equalsIgnoreCase("crab")) return 1;
+        else if (nameString.equalsIgnoreCase("jellyfish")) return 2;
+        else if (nameString.equalsIgnoreCase("octopus")) return 3;
+        else if (nameString.equalsIgnoreCase("seahorse")) return 4;
+        else if (nameString.equalsIgnoreCase("sponge")) return 5;
+        else if (nameString.equalsIgnoreCase("starfish")) return 6;
+        else if (nameString.equalsIgnoreCase("fish")) return 7;
+        else if (nameString.equalsIgnoreCase("turtle")) return 8;
+        else return -1;
     }
 
     // tagCount

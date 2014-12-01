@@ -10,18 +10,34 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity" >
 
+    <!--LinearLayout
+        android:id="@+id/in_game_timer"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:textSize="34sp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        android:weightSum="2">
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="0dp"
+           android:layout_weight="1" />
+
+        </LinearLayout-->
+
     <fragment
         android:id="@+id/map_fragment"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="5dp" />
 
     <ListView
-        android:id="@+id/posts_listview"
+        android:id="@+id/players_listview"
         android:layout_width="fill_parent"
         android:layout_height="300dp"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+       />
 
 </LinearLayout>

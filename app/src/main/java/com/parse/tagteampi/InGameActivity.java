@@ -63,7 +63,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
      * Activity.onActivityResult
      */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private String idGameObject = this.getIntent().getExtras().getString("gameObjectId");
+    private String idGameObject;
     /*
      * Constants for location update parameters
      */
@@ -143,6 +143,8 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        idGameObject = getIntent().getExtras().getString("gameObjectId");
+
         ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
 
         gameSettings.findInBackground(new FindCallback<TagGame>() {
@@ -150,9 +152,9 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             public void done(List<TagGame> list, ParseException e) {
                 for (TagGame aList : list) {
                     if(aList.getObjectId().equalsIgnoreCase(idGameObject)){
-                        radius = aList.getRadious();
+                        radius = aList.getMapRadius();
                         tagLimit = aList.getTagLimit();
-                        tagRadius = aList.getTagRadious();
+                        tagRadius = aList.getTagRadius();
                         duration = aList.getTime();
                         centerCircle = aList.getLocation();
 
@@ -181,13 +183,10 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         // Set up a customized query
         ParseQueryAdapter.QueryFactory<TagPlayer> factory = new ParseQueryAdapter.QueryFactory<TagPlayer>() {
             public ParseQuery<TagPlayer> create() {
-                Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
-                ParseQuery<TagPlayer> query = TagPlayer.getQuery();
-                query.include("Game");
-                query.orderByDescending("createdAt");
-                query.whereWithinKilometers("location", geoPointFromLocation(myLoc), radius * METERS_PER_FEET / METERS_PER_KILOMETER);
-                query.setLimit(MAX_POST_SEARCH_RESULTS);
 
+                ParseQuery<TagPlayer> query = TagPlayer.getQuery();
+                query.whereEqualTo("gameId",idGameObject);
+                query.orderByDescending("createdAt");
                 return query;
             }
         };
@@ -199,9 +198,9 @@ public class InGameActivity extends FragmentActivity implements LocationListener
                 if (view == null) {
                     view = View.inflate(getContext(), R.layout.anywall_post_item, null);
                 }
-                TextView contentView = (TextView) view.findViewById(R.id.content_view);      //???????????????????????????
+                TextView contentView = (TextView) view.findViewById(R.id.content_view);
                 TextView usernameView = (TextView) view.findViewById(R.id.username_view);
-                contentView.setText(player.getPlayer());                                        //????????????????????????????
+                contentView.setText(player.getPlayer());
                 usernameView.setText("not itt");
 
                 return view;
@@ -209,17 +208,17 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         };
 
         // Disable automatic loading when the adapter is attached to a view.
-        postsQueryAdapter.setAutoload(false);
+        postsQueryAdapter.setAutoload(true);
 
         // Disable pagination, we'll manage the query limit ourselves
         postsQueryAdapter.setPaginationEnabled(false);
 
         // Attach the query adapter to the view
-        ListView postsListView = (ListView) findViewById(R.id.posts_listview);
-        postsListView.setAdapter(postsQueryAdapter);
+        ListView playersListView = (ListView) findViewById(R.id.players_listview);
+        playersListView.setAdapter(postsQueryAdapter);
 
         // Set up the handler for an item's selection
-        postsListView.setOnItemClickListener(new OnItemClickListener() {
+        playersListView.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 final TagPlayer item = postsQueryAdapter.getItem(position);
                 selectedPostObjectId = item.getObjectId();
@@ -536,6 +535,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         ParseQuery<TagPlayer> mapQuery = TagPlayer.getQuery();
         // Set up additional query filters
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
+        mapQuery.whereEqualTo("gameId",idGameObject);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
         mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);

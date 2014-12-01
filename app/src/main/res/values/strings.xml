@@ -24,10 +24,13 @@
     <string name="mapsAPIkeyV2">AIzaSyCcOfnoul8Lpu0w0kmBh3cUaKDRM2ZxaS4</string>
     <string name="mainLobbyTitle">Active Games</string>
     <string name="createGame">create game</string>
+    <string name="gameSettings">Game Settings</string>
+    <string name="playerSettings">Player Settings</string>
     <string name="gameplay_radius">Game Radius</string>
     <string name="time_limit">Time Limit</string>
     <string name="tagradius">Tag Radius</string>
-    <string name="taglimit">Tag limit</string>
+    <string name="taglimit">Tag Limit</string>
+    <string name="avatar">Avatar</string>
     <string name="apply">Apply</string>
     <string name="defaultSettings">Default</string>
     <string name="activity_suspension_title">Suspension List</string>

@@ -3,13 +3,17 @@ package com.parse.tagteampi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Paint;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -19,9 +23,10 @@ import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+
+import java.lang.reflect.Field;
 
 
 public class GameSettingsActivity extends Activity {
@@ -29,16 +34,18 @@ public class GameSettingsActivity extends Activity {
     private RadioGroup tagRadiusRadioGroup;
     private Spinner timeLimitSpinner;
     private RadioGroup tagLimitGroup;
+    private RadioGroup avatarRadioGroup;
     private Button apply;
     //integer values for various uses
     private int GAME_RADIUS = 300;
     private int TAG_RADIUS = 10;
     private int TAG_LIMIT = 0;
     private int MINUTES = 0;
+    private String AVATAR = "crab";
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
     private String[] RADIUS_INTERVALS = new String[38];
-
+    //private String USER_NAME;
 
 
     private double latitude;
@@ -60,7 +67,8 @@ public class GameSettingsActivity extends Activity {
                 PRINTED_MESSAGE = "The values as found:\nTag Distance: " + TAG_RADIUS
                         + "\nGameplay Radius: " + GAME_RADIUS
                         + "\nTag Limit: " + TAG_LIMIT
-                        + "\nTime limit: " + MINUTES;
+                        + "\nTime limit: " + MINUTES
+                        + "\nAvatar: " + AVATAR;
                 Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
 
                 //LocationManager used to get the current location of the user.  Will be used for
@@ -79,8 +87,8 @@ public class GameSettingsActivity extends Activity {
                     final TagGame game = new TagGame();
                     game.setUser(ParseUser.getCurrentUser().getString("username"));
                     game.setTime(MINUTES);
-                    game.setRadious(GAME_RADIUS);
-                    game.setTagRadious(TAG_RADIUS);
+                    game.setMapRadius(GAME_RADIUS);
+                    game.setTagRadius(TAG_RADIUS);
                     game.setTagLimit(TAG_LIMIT);
                     game.setLocation(geoPoint);
 
@@ -94,21 +102,25 @@ public class GameSettingsActivity extends Activity {
                                 final String gameObjectId = game.getObjectId();
                                 final Intent toLobby = new Intent(getBaseContext(),
                                         InGameActivity.class);
+                                toLobby.putExtra("gameObjectId", gameObjectId);
 
+                                //Create Player parseObject and relate it to Game parseObject
+                                final TagPlayer player = new TagPlayer();
+                                player.setGame(gameObjectId);
+                                player.setPlayer(ParseUser.getCurrentUser().getString("username"));
+                                player.setLocation(geoPoint);
+                                player.setAvatar(TagPlayer.getAvatarNumber(AVATAR));
+                                player.setTagCount(0);
 
-                                //Creates ActiveUser parseObject and relates it to Game parseObject
-                                final TagPlayer activeUser = new TagPlayer();
-                                activeUser.setPlayer(ParseUser.getCurrentUser().getUsername());
-                                activeUser.setGame(gameObjectId);
-
-                                activeUser.saveInBackground(new SaveCallback() {
+                                player.saveInBackground(new SaveCallback() {
                                     @Override
                                     public void done(ParseException e) {
                                         if (e == null) {
-                                            //Saves the TagPlayer objectId to keys that can be
+                                            //Saves the ActiveUsers objectId to keys that can be
                                             // accessed by the activity (InGameLobbyActivity??)
                                             // that follows.
-                                            toLobby.putExtra("gameObjectId", gameObjectId);
+                                            String playerObjectId = player.getObjectId();
+                                            toLobby.putExtra("playerObjectId", playerObjectId);
                                             startActivity(toLobby);
                                         }
                                     }
@@ -134,6 +146,8 @@ public class GameSettingsActivity extends Activity {
         gameRadiusNumberPicker.setMinValue(0);
         gameRadiusNumberPicker.setDisplayedValues(RADIUS_INTERVALS);
         gameRadiusNumberPicker.setValue(GAME_RADIUS); //initial set
+        setNumberPickerTextColor(gameRadiusNumberPicker, Color.parseColor("white"));
+        gameRadiusNumberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
 
         //Initialize the tag radius button group
         tagRadiusRadioGroup = (RadioGroup) findViewById(R.id.tag_radiogroup);
@@ -156,7 +170,7 @@ public class GameSettingsActivity extends Activity {
         //Time Limit Spinner
         timeLimitSpinner = (Spinner) findViewById(R.id.spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.times_array, android.R.layout.simple_spinner_item);
+                R.array.times_array, R.layout.settings_spinner);
         //set the layout for the spinner
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         timeLimitSpinner.setAdapter(adapter);
@@ -217,6 +231,15 @@ public class GameSettingsActivity extends Activity {
             }
         });
         timeLimitSpinner.setSelection(4);
+
+        //Initialize the avatar radio group
+        avatarRadioGroup = (RadioGroup) findViewById(R.id.avatar_radiogroup);
+        avatarRadioGroup.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                setAvatarById(checkedId); //uses the button string to set the integer value
+            }
+        });
 
         //Initialize the default button
         Button defaults = (Button) findViewById(R.id.default_settings_button);
@@ -281,6 +304,41 @@ public class GameSettingsActivity extends Activity {
         RadioButton button = (RadioButton) findViewById(buttonId);
         String label = button.getText().toString();
         TAG_RADIUS = Integer.parseInt(label);
+    }
+
+    //uses the button ID to set the avatar by checking the string value
+    public void setAvatarById(int buttonId) {
+        RadioButton button = (RadioButton) findViewById(buttonId);
+        AVATAR = button.getTag().toString();
+    }
+
+    public static boolean setNumberPickerTextColor(NumberPicker numberPicker, int color)
+    {
+        final int count = numberPicker.getChildCount();
+        for(int i = 0; i < count; i++){
+            View child = numberPicker.getChildAt(i);
+            if(child instanceof EditText){
+                try{
+                    Field selectorWheelPaintField = numberPicker.getClass()
+                            .getDeclaredField("mSelectorWheelPaint");
+                    selectorWheelPaintField.setAccessible(true);
+                    ((Paint)selectorWheelPaintField.get(numberPicker)).setColor(color);
+                    ((EditText)child).setTextColor(color);
+                    numberPicker.invalidate();
+                    return true;
+                }
+                catch(NoSuchFieldException e){
+                    Log.w("setNumberPickerTextColor", e);
+                }
+                catch(IllegalAccessException e){
+                    Log.w("setNumberPickerTextColor", e);
+                }
+                catch(IllegalArgumentException e){
+                    Log.w("setNumberPickerTextColor", e);
+                }
+            }
+        }
+        return false;
     }
 
 }

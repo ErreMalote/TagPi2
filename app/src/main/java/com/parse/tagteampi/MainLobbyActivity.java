@@ -86,56 +86,64 @@ public class MainLobbyActivity extends Activity {
         LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Location lastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        latitude = lastLocation.getLatitude();
-        longitude = lastLocation.getLongitude();
 
-        final ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
+        if (lastLocation != null) {
+            latitude = lastLocation.getLatitude();
+            longitude = lastLocation.getLongitude();
 
-        ParseQuery<TagGame> gamesQuery = ParseQuery.getQuery("Game");
+            final ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
 
-
-        gamesQuery.findInBackground(new FindCallback<TagGame>() {
-            @Override
-            public void done(List<TagGame> list, ParseException e) {
-                for (TagGame aList : list) {
-                    arr.add(aList.getUser());
-                    arr1.add(aList.getObjectId());
-                }
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arr);
-                listView.setAdapter(adapter);
-            }
-        });
+            ParseQuery<TagGame> gamesQuery = ParseQuery.getQuery("Game");
 
 
-        listView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
-                Toast.makeText(getApplicationContext(), "Hii" + position, Toast.LENGTH_SHORT).show();
-
-                final Intent toGame = new Intent(getBaseContext(), InGameActivity.class);
-
-
-                //Creates ActiveUser parseObject and relates it to Game parseObject
-                TagPlayer player1 = new TagPlayer();
-                player1.setPlayer(ParseUser.getCurrentUser().getUsername());
-                player1.setGame(arr1.get(position));
-                player1.setLocation(geoPoint);
-                player1.setTagCount(0);
-                toGame.putExtra("gameObjectId", arr1.get(position));
-                player1.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        if (e == null) {
-                            //Saves the TagPlayer objectId to keys that can be
-
-                            startActivity(toGame);
-                        }
+            gamesQuery.findInBackground(new FindCallback<TagGame>() {
+                @Override
+                public void done(List<TagGame> list, ParseException e) {
+                    for (TagGame aList : list) {
+                        arr.add(aList.getUser());
+                        arr1.add(aList.getObjectId());
                     }
-                });
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arr);
+                    listView.setAdapter(adapter);
+                }
+            });
+
+            listView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view,int position, long id) {
+                    Toast.makeText(getApplicationContext(), "Hii" + position, Toast.LENGTH_SHORT).show();
+
+                    final Intent toGame = new Intent(getBaseContext(), InGameActivity.class);
 
 
-            }
-        });
+                    //Creates ActiveUser parseObject and relates it to Game parseObject
+                    TagPlayer player1 = new TagPlayer();
+                    player1.setPlayer(ParseUser.getCurrentUser().getUsername());
+                    player1.setGame(arr1.get(position));
+                    player1.setLocation(geoPoint);
+                    player1.setTagCount(0);
+                    toGame.putExtra("gameObjectId", arr1.get(position));
+                    player1.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            if (e == null) {
+                                //Saves the TagPlayer objectId to keys that can be
+
+                                startActivity(toGame);
+                            }
+                        }
+                    });
+
+
+                }
+            });
+        }
+        else{
+            //Can not get current location - Advise User
+            Toast.makeText(getBaseContext(), "Can not find GPS location.", Toast.LENGTH_LONG).show();
+        }
+
+
     }
 
     @Override
@@ -182,6 +190,9 @@ public class MainLobbyActivity extends Activity {
                 return view;
             }
         };
+
+    query.whereWithinKilometers("location", geoPointFromLocation(myLoc), radius * METERS_PER_FEET / METERS_PER_KILOMETER);
+                query.setLimit(MAX_POST_SEARCH_RESULTS);
 
 */
 

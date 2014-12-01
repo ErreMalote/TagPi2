@@ -14,11 +14,11 @@ import com.parse.ParseUser;
 @ParseClassName("Game")
 public class TagGame extends ParseObject {
 
-    public int getRadious() {
+    public int getMapRadius() {
         return getInt("gameRadius");
     }
 
-    public void setRadious(int value) {
+    public void setMapRadius(int value) {
         put("gameRadius", value);
     }
 
@@ -43,15 +43,15 @@ public class TagGame extends ParseObject {
     }
 
     public void setTagLimit(int value) {
-        put("TagLimit", value);
+        put("tagLimit", value);
     }
 
-    public int getTagRadious() {
+    public int getTagRadius() {
         return getInt("tagRadius");
     }
 
-    public void setTagRadious(int value) {
-        put("TagRadius", value);
+    public void setTagRadius(int value) {
+        put("tagRadius", value);
     }
 
     public ParseGeoPoint getLocation() {
