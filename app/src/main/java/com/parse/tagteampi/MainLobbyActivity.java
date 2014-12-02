@@ -100,7 +100,7 @@ public class MainLobbyActivity extends Activity {
                 @Override
                 public void done(List<TagGame> list, ParseException e) {
                     for (TagGame aList : list) {
-                        arr.add(aList.getUser());
+                        arr.add(aList.getHostUser());
                         arr1.add(aList.getObjectId());
                     }
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_list_item_1, arr);

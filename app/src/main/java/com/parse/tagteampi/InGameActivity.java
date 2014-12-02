@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+
 import java.util.Set;
 
 import android.app.Activity;
@@ -13,7 +13,9 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -47,12 +49,14 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
+import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 
 public class InGameActivity extends FragmentActivity implements LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -71,7 +75,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     private static final int MILLISECONDS_PER_SECOND = 1000;
 
     // The update interval
-    private static final int UPDATE_INTERVAL_IN_SECONDS = 5;
+    private static final int UPDATE_INTERVAL_IN_SECONDS = 2;
 
     // A fast interval ceiling
     private static final int FAST_CEILING_IN_SECONDS = 1;
@@ -83,7 +87,6 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     // A fast ceiling of update intervals, used when the app is visible
     private static final long FAST_INTERVAL_CEILING_IN_MILLISECONDS = MILLISECONDS_PER_SECOND
             * FAST_CEILING_IN_SECONDS;
-
     /*
      * Constants for handling location results
      */
@@ -120,7 +123,10 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     private int  tagLimit;
     private double duration;
     private float tagRadius;
+    private String hostUser;
     private ParseGeoPoint centerCircle;
+    private boolean gameStarted;
+
 
     // Fields for helping process map and location changes
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
@@ -155,8 +161,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
                         radius = aList.getMapRadius();
                         tagLimit = aList.getTagLimit();
                         tagRadius = aList.getTagRadius();
-                        duration = aList.getTime();
+                        duration = aList.getGameDuration();
                         centerCircle = aList.getLocation();
+                        hostUser = aList.getHostUser();
+                        if(aList.getStartTime() != null){
+                            gameStarted = true;
+                        }else{
+                            gameStarted = false;
+                        }
 
                     }
                 }
@@ -255,28 +267,91 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             public void onCameraChange(CameraPosition position) {
                 // When the camera changes, update the query
                 doMapQuery();
+
             }
         });
 
-        // Set up the handler for the post button click
-        /*
-        Button postButton = (Button) findViewById(R.id.post_button);
-        postButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                // Only allow posts if we have a location
-                Location myLoc = (currentLocation == null) ? lastLocation : currentLocation;
-                if (myLoc == null) {
-                    Toast.makeText(InGameActivity.this,
-                            "Please try again after your location appears on the map.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                Intent intent = new Intent(InGameActivity.this, PostActivity.class); //?????????????????????????????
-                intent.putExtra(Application.INTENT_EXTRA_LOCATION, myLoc);
-                startActivity(intent);
-            }
-        });*/
+        tickHandler.postDelayed(tickRunnable, 2000);
     }
+
+    // tick function
+    protected Handler tickHandler = new Handler();
+    protected Runnable tickRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+
+            if (hostUser.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())) {
+
+                /*
+
+                JASON :)
+                 */
+
+
+            } else {
+                if (!gameStarted) {
+                    ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
+                    gameSettings.findInBackground(new FindCallback<TagGame>() {
+                        @Override
+                        public void done(List<TagGame> list, ParseException e) {
+                            for (TagGame aList : list) {
+                                if (aList.getObjectId().equalsIgnoreCase(idGameObject)) {
+                                    if (aList.getStartTime() != null) {
+                                        gameStarted = true;
+                                    } else {
+                                        gameStarted = false;
+                                    }
+                                }
+                            }
+                        }
+                    });
+                } else {
+
+                    ParseQuery<TagPlayer> gameSettings = ParseQuery.getQuery("Player");
+                    gameSettings.findInBackground(new FindCallback<TagPlayer>() {
+                        @Override
+                        public void done(List<TagPlayer> list, ParseException e) {
+                            for (TagPlayer aList : list) {
+                               if(aList.getGame().equalsIgnoreCase(idGameObject) && ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(aList.getPlayer())){
+
+                               }
+                            }
+                        }
+                    });
+
+
+                    playerData.setLocation(new ParseGeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude()));
+                    playerData.saveInBackground();
+
+                    // Get new data for all players in current game
+                    ParseQuery<TagPlayer> query = ParseQuery.getQuery("Player");
+                    query.whereEqualTo("gameId", gameData.getObjectId());
+                    query.findInBackground(new FindCallback<TagPlayer>() {
+                        public void done(List<TagPlayer> tp, ParseException e) {
+                            if (e == null) {
+                                if (playerData.isItt()) {
+                                    for (int i = 0; i < tp.size(); i++) {
+                                        // do Itt player stuff
+                                    }
+                                } else {
+                                    for (int i = 0; i < tp.size(); i++) {
+                                        // do NotItt player stuff
+                                    }
+                                }
+                            } else {
+                                // Error case - suspension time!
+                            }
+                        }
+                    });
+                }
+            }
+            tickHandler.postDelayed(this, 2000);
+
+        }
+
+        ;
+    };
 
     /*
      * Called when the Activity is no longer visible at all. Stop updates and disconnect.
@@ -518,7 +593,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             // Refreshes the list view with new data based
             // usually on updated location data.
             postsQueryAdapter.loadObjects();
-        }
+    }
     }
 
     /*
@@ -709,9 +784,14 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         mapCircle.setRadius(radius * METERS_PER_FEET); // Convert radius in feet to meters.
     }
 
+    /*@Override
+    public void onBackPressed() {
+
+    }*/
+
     /*
-     * Zooms the map to show the area of interest based on the search radius
-     */
+         * Zooms the map to show the area of interest based on the search radius
+         */
     private void updateZoom(LatLng myLatLng) {
         // Get the bounds to zoom to
         LatLngBounds bounds = calculateBoundsWithCenter(myLatLng);
@@ -861,6 +941,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             return mDialog;
         }
     }
+
 
     /*
     private void autoTag(String gameObjectId, ParseUser currentUser) {

@@ -7,6 +7,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.util.Date;
+
 
 /**
  * Data model for a post.
@@ -22,19 +24,19 @@ public class TagGame extends ParseObject {
         put("gameRadius", value);
     }
 
-    public String getUser() {
+    public String getHostUser() {
         return getString("host_user");
     }
 
-    public void setUser(String value) {
+    public void setHostUser(String value) {
         put("host_user", value);
     }
 
-    public long getTime() {
+    public long getGameDuration() {
         return getLong("gameDuration");
     }
 
-    public void setTime(long value) {
+    public void setGameDuration(long value) {
         put("gameDuration", value);
     }
 
@@ -61,6 +63,10 @@ public class TagGame extends ParseObject {
     public void setLocation(ParseGeoPoint value) {
         put("location", value);
     }
+
+    public Date getStartTime() { return getDate("startTime"); }
+
+    public void setStartTime(Date value) { put("startTime", value); }
 
     public static ParseQuery<TagGame> getQuery() {
         return ParseQuery.getQuery(TagGame.class);
