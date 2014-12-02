@@ -49,4 +49,5 @@
     <string name="exit_lobby">Exit Lobby</string>
     <string name="title_activity_lobby">LobbyActivity</string>
     <string name="start_game">Start Game</string>
+
 </resources>

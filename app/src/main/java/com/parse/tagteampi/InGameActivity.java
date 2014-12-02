@@ -1,12 +1,13 @@
 package com.parse.tagteampi;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import java.util.Set;
-
+import android.widget.Toast;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
@@ -27,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -73,7 +75,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
      */
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
-
+    private Button startGameButton;
     // The update interval
     private static final int UPDATE_INTERVAL_IN_SECONDS = 2;
 
@@ -127,6 +129,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     private ParseGeoPoint centerCircle;
     private boolean gameStarted;
 
+    private boolean enoughPlayers = false;
 
     // Fields for helping process map and location changes
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
@@ -280,77 +283,99 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         @Override
         public void run() {
 
+         if (!gameStarted) {
+             if (hostUser.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())) {
 
-            if (hostUser.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())) {
+                 startGameButton = (Button) findViewById(R.id.startGameButton);
+                 startGameButton.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         ParseQuery<ParseObject> playerCount = ParseQuery.getQuery("Player");
+                         playerCount.whereEqualTo("objectId", idGameObject);
+                         playerCount.findInBackground(new FindCallback<ParseObject>() {
+                             @Override
+                             public void done(List<ParseObject> playerList, ParseException e) {
+                                 if (e == null) {
+                                     if (playerList.size() < 3) {
+                                         Toast.makeText(InGameActivity.this, "Need 3 players to start",
+                                                 Toast.LENGTH_LONG).show();
+                                     } else if (playerList.size() > 8) {
+                                         Toast.makeText(InGameActivity.this, "Player maximum is 8.",
+                                                 Toast.LENGTH_LONG).show();
+                                     } else {
+                                         enoughPlayers = true;
+                                     }
+                                 }
+                             }
+                         });
 
-                /*
+                         if (enoughPlayers) {
+                             ParseQuery<TagGame> gameStartQuery = ParseQuery.getQuery("Game");
+                             gameStartQuery.getInBackground(idGameObject, new GetCallback<TagGame>() {
+                                 @Override
+                                 public void done(TagGame gameStart, ParseException e) {
+                                     if (e == null) {
+                                         Date date = new Date();
+                                         date.getTime();
+                                         gameStart.setStartTime(date);
+                                         gameStart.put("startTime", date);
+                                         gameStart.saveInBackground();
+                                     }
+                                 }
+                             });
+                         }
 
-                JASON :)
-                 */
+                         // Button folds out of layout after being pressed.
+                         Button button = (Button) v;
+                         button.setVisibility(View.GONE);
+
+                         //Game starts
+                         gameStarted = true;
+                     }
+                 });
 
 
-            } else {
-                if (!gameStarted) {
-                    ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
-                    gameSettings.findInBackground(new FindCallback<TagGame>() {
-                        @Override
-                        public void done(List<TagGame> list, ParseException e) {
-                            for (TagGame aList : list) {
-                                if (aList.getObjectId().equalsIgnoreCase(idGameObject)) {
-                                    if (aList.getStartTime() != null) {
-                                        gameStarted = true;
-                                    } else {
-                                        gameStarted = false;
-                                    }
-                                }
-                            }
-                        }
-                    });
-                } else {
+             } else {
+
+                 ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
+                 gameSettings.findInBackground(new FindCallback<TagGame>() {
+                     @Override
+                     public void done(List<TagGame> list, ParseException e) {
+                         for (TagGame aList : list) {
+                             if (aList.getObjectId().equalsIgnoreCase(idGameObject)) {
+                                 if (aList.getStartTime() != null) {
+                                     gameStarted = true;
+                                 } else {
+                                     gameStarted = false;
+                                 }
+                             }
+                         }
+                     }
+                 });
+             }
+         }
+         else {
 
                     ParseQuery<TagPlayer> gameSettings = ParseQuery.getQuery("Player");
                     gameSettings.findInBackground(new FindCallback<TagPlayer>() {
                         @Override
                         public void done(List<TagPlayer> list, ParseException e) {
                             for (TagPlayer aList : list) {
-                               if(aList.getGame().equalsIgnoreCase(idGameObject) && ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(aList.getPlayer())){
-
-                               }
-                            }
-                        }
-                    });
-
-
-                    playerData.setLocation(new ParseGeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude()));
-                    playerData.saveInBackground();
-
-                    // Get new data for all players in current game
-                    ParseQuery<TagPlayer> query = ParseQuery.getQuery("Player");
-                    query.whereEqualTo("gameId", gameData.getObjectId());
-                    query.findInBackground(new FindCallback<TagPlayer>() {
-                        public void done(List<TagPlayer> tp, ParseException e) {
-                            if (e == null) {
-                                if (playerData.isItt()) {
-                                    for (int i = 0; i < tp.size(); i++) {
-                                        // do Itt player stuff
-                                    }
-                                } else {
-                                    for (int i = 0; i < tp.size(); i++) {
-                                        // do NotItt player stuff
-                                    }
+                                if (aList.getGame().equalsIgnoreCase(idGameObject) && ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(aList.getPlayer())) {
+                                    aList.setLocation(new ParseGeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude()));
                                 }
-                            } else {
-                                // Error case - suspension time!
                             }
                         }
                     });
+
+
                 }
-            }
-            tickHandler.postDelayed(this, 2000);
+
+            tickHandler.postDelayed(this, 1000);
 
         }
 
-        ;
+
     };
 
     /*

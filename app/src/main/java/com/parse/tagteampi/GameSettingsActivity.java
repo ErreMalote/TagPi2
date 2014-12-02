@@ -19,14 +19,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import org.w3c.dom.Text;
+
 import java.lang.reflect.Field;
+import java.util.List;
 
 
 public class GameSettingsActivity extends Activity {
@@ -45,7 +51,7 @@ public class GameSettingsActivity extends Activity {
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
     private String[] RADIUS_INTERVALS = new String[38];
-    //private String USER_NAME;
+    private String GAME_OBJECT_ID;
 
 
     private double latitude;
@@ -54,8 +60,7 @@ public class GameSettingsActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //TODO: connect user information with game settings as extras
-        //USER_NAME = this.getIntent().getExtras().getString("Username");
+        GAME_OBJECT_ID = this.getIntent().getExtras().getString("gameObjectId");
         setContentView(R.layout.activity_create_game);
 
         //Initialize the apply button, which currently pushes settings' values to the screen through Toast
@@ -63,13 +68,13 @@ public class GameSettingsActivity extends Activity {
         apply = (Button) findViewById(R.id.done_button);
         apply.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                GAME_RADIUS = Integer.parseInt(RADIUS_INTERVALS[gameRadiusNumberPicker.getValue()]);
-                PRINTED_MESSAGE = "The values as found:\nTag Distance: " + TAG_RADIUS
-                        + "\nGameplay Radius: " + GAME_RADIUS
-                        + "\nTag Limit: " + TAG_LIMIT
-                        + "\nTime limit: " + MINUTES
-                        + "\nAvatar: " + AVATAR;
-                Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
+
+//                PRINTED_MESSAGE = "The values as found:\nTag Distance: " + TAG_RADIUS
+//                        + "\nGameplay Radius: " + GAME_RADIUS
+//                        + "\nTag Limit: " + TAG_LIMIT
+//                        + "\nTime limit: " + MINUTES
+//                        + "\nAvatar: " + AVATAR;
+//                Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
 
                 //LocationManager used to get the current location of the user.  Will be used for
                 //setting the center of the game play area.
@@ -83,58 +88,118 @@ public class GameSettingsActivity extends Activity {
 
                     final ParseGeoPoint geoPoint = new ParseGeoPoint(latitude, longitude);
 
-                    //Creates Game parseObject for the current user to host a game.
-                    final TagGame game = new TagGame();
-                    game.setUser(ParseUser.getCurrentUser().getString("username"));
-                    game.setTime(MINUTES);
-                    game.setMapRadius(GAME_RADIUS);
-                    game.setTagRadius(TAG_RADIUS);
-                    game.setTagLimit(TAG_LIMIT);
-                    game.setLocation(geoPoint);
+                    // CREATE NEW GAME: if no existing gameObjectId was passed from the Main Lobby
+                    if (GAME_OBJECT_ID == null) {
 
-                    game.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-                                //Saves the game settings data and game objectId to key that
-                                // can be accessed by the activity (InGameLobbyActivity??)
-                                // that follows.
-                                final String gameObjectId = game.getObjectId();
-                                final Intent toLobby = new Intent(getBaseContext(),
-                                        InGameActivity.class);
-                                toLobby.putExtra("gameObjectId", gameObjectId);
+                        //Creates Game parseObject for the current user to host a game.
+                        final TagGame game = new TagGame();
+                        game.setHostUser(ParseUser.getCurrentUser().getString("username"));
+                        game.setGameDuration(MINUTES);
+                        game.setMapRadius(Integer.parseInt(RADIUS_INTERVALS[gameRadiusNumberPicker.getValue()]));
+                        game.setTagRadius(TAG_RADIUS);
+                        game.setTagLimit(TAG_LIMIT);
+                        game.setLocation(geoPoint);
 
-                                //Create Player parseObject and relate it to Game parseObject
-                                final TagPlayer player = new TagPlayer();
-                                player.setGame(gameObjectId);
-                                player.setPlayer(ParseUser.getCurrentUser().getString("username"));
-                                player.setLocation(geoPoint);
-                                player.setAvatar(TagPlayer.getAvatarNumber(AVATAR));
-                                player.setTagCount(0);
-                                player.setNotItt();
+                        game.saveInBackground(new SaveCallback() {
+                            @Override
+                            public void done(ParseException e) {
+                                if (e == null) {
+                                    //Saves the game settings data and game objectId to key that
+                                    // can be accessed by the activity (InGameLobbyActivity??)
+                                    // that follows.
+                                    final String gameObjectId = game.getObjectId();
+                                    final Intent toGame = new Intent(GameSettingsActivity.this,
+                                            InGameActivity.class);
+                                    toGame.putExtra("gameObjectId", gameObjectId);
 
-                                player.saveInBackground(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                        if (e == null) {
-                                            //Saves the ActiveUsers objectId to keys that can be
-                                            // accessed by the activity (InGameLobbyActivity??)
-                                            // that follows.
-                                            String playerObjectId = player.getObjectId();
-                                            toLobby.putExtra("playerObjectId", playerObjectId);
-                                            startActivity(toLobby);
+                                    //Create Player parseObject and relate it to Game parseObject
+                                    final TagPlayer player = new TagPlayer();
+                                    player.setGame(gameObjectId);
+                                    player.setPlayer(ParseUser.getCurrentUser().getString("username"));
+                                    player.setLocation(geoPoint);
+                                    player.setAvatar(TagPlayer.getAvatarNumber(AVATAR));
+                                    player.setTagCount(0);
+
+                                    player.saveInBackground(new SaveCallback() {
+                                        @Override
+                                        public void done(ParseException e) {
+                                            if (e == null) {
+                                                //Saves the ActiveUsers objectId to keys that can be
+                                                // accessed by the activity (InGameLobbyActivity??)
+                                                // that follows.
+                                                String playerObjectId = player.getObjectId();
+                                                toGame.putExtra("playerObjectId", playerObjectId);
+                                                startActivity(toGame);
+                                            }
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             }
-                        }
-                    });
+                        });
+
+                        // JOIN EXISTING GAME: if a gameObjectId was passed from the Main Lobby
+                    } else {
+                        // Need to figure out if the selected avatar has already been used
+                        ParseQuery<TagPlayer> pquery = TagPlayer.getQuery();
+                        pquery.whereEqualTo("gameId", GAME_OBJECT_ID);
+                        pquery.findInBackground(new FindCallback<TagPlayer>() {
+                            @Override
+                            public void done(List<TagPlayer> plist, ParseException e) {
+
+                                if (e == null) {
+                                    int[] usedAvatars = new int[8];
+
+                                    for (int i = 0; i < plist.size(); i++) {
+                                        usedAvatars[(plist.get(i).getAvatar()) - 1] = 1;
+                                    }
+
+                                    if (usedAvatars[TagPlayer.getAvatarNumber(AVATAR) - 1] != 0) {
+                                        // Avatar already used, make toast.
+                                        Toast.makeText(getApplicationContext(), "That avatar has already been taken!", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        //Saves the game settings data and game objectId to key that
+                                        // can be accessed by the activity (InGameLobbyActivity??)
+                                        // that follows.
+                                        final Intent toGame = new Intent(GameSettingsActivity.this,
+                                                InGameActivity.class);
+                                        toGame.putExtra("gameObjectId", GAME_OBJECT_ID);
+
+                                        //Create Player parseObject and relate it to Game parseObject
+                                        final TagPlayer player = new TagPlayer();
+                                        player.setGame(GAME_OBJECT_ID);
+                                        player.setPlayer(ParseUser.getCurrentUser().getString("username"));
+                                        player.setLocation(geoPoint);
+                                        player.setAvatar(TagPlayer.getAvatarNumber(AVATAR));
+                                        player.setTagCount(0);
+
+                                        player.saveInBackground(new SaveCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+                                                if (e == null) {
+                                                    //Saves the ActiveUsers objectId to keys that can be
+                                                    // accessed by the activity (InGameLobbyActivity??)
+                                                    // that follows.
+                                                    String playerObjectId = player.getObjectId();
+                                                    toGame.putExtra("playerObjectId", playerObjectId);
+                                                    startActivity(toGame);
+                                                }
+                                            }
+                                        });
+                                    }
+                                } else {
+                                    Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
+                    }
                 } else {
                     //Can not get current location - Advise User
                     Toast.makeText(GameSettingsActivity.this, "Can not find GPS location.", Toast.LENGTH_LONG).show();
                 }
             }
         });
+
+        // GAME SETTINGS WIDGETS
 
         //Initialize the gameplay radius number picker
         gameRadiusNumberPicker = (NumberPicker) findViewById(R.id.gpRadius);
@@ -231,7 +296,9 @@ public class GameSettingsActivity extends Activity {
 
             }
         });
-        timeLimitSpinner.setSelection(4);
+        timeLimitSpinner.setSelection(8);
+
+        // PLAYER SETTINGS WIDGETS
 
         //Initialize the avatar radio group
         avatarRadioGroup = (RadioGroup) findViewById(R.id.avatar_radiogroup);
@@ -247,15 +314,52 @@ public class GameSettingsActivity extends Activity {
         /**Default settings can be changed inside this onClick method*/
         defaults.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
-                tagLimitGroup.check(R.id.five);
-                tagRadiusRadioGroup.check(R.id.ten_meters);
-                gameRadiusNumberPicker.setValue(300); //apparently this works
-                GAME_RADIUS = 300; //just to make sure
-                timeLimitSpinner.setSelection(8); //gotta check that this is "unselected"
-                MINUTES = 0;
+                if (GAME_OBJECT_ID == null) {
+                    tagLimitGroup.check(R.id.five);
+                    tagRadiusRadioGroup.check(R.id.ten_meters);
+                    gameRadiusNumberPicker.setValue(300); //apparently this works
+                    GAME_RADIUS = 300; //just to make sure
+                    timeLimitSpinner.setSelection(8); //gotta check that this is "unselected"
+                    MINUTES = 0;
+                }
+                RadioButton crabRadio = (RadioButton) findViewById(R.id.crab);
+                crabRadio.setChecked(true);
+
             }
         });
+
+
+        // If user is joining an existing game, need to disable all layout related to Game Settings
+        if (GAME_OBJECT_ID != null) {
+            TextView gameSettingsTextView = (TextView) findViewById(R.id.gamesettings_textview);
+            gameSettingsTextView.setVisibility(View.GONE);
+
+            TextView gameRadiusTextView = (TextView) findViewById(R.id.gpradius_textview);
+            gameRadiusTextView.setVisibility(View.GONE);
+
+            TextView timeLimitTextView = (TextView) findViewById(R.id.time_textView);
+            timeLimitTextView.setVisibility(View.GONE);
+
+            gameRadiusNumberPicker.setVisibility(View.GONE);
+
+            timeLimitSpinner.setVisibility(View.GONE);
+
+            TextView tagRadiusTextView = (TextView) findViewById(R.id.tag_textview);
+            tagRadiusTextView.setVisibility(View.GONE);
+
+            tagRadiusRadioGroup.setVisibility(View.GONE);
+
+            TextView tagLimitTextView = (TextView) findViewById(R.id.limit_textView);
+            tagLimitTextView.setVisibility(View.GONE);
+
+            tagLimitGroup.setVisibility(View.GONE);
+
+
+
+        }
     }
+
+
 
     /*
         //Allow the user to back out through the settings menu
