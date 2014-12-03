@@ -1,14 +1,17 @@
-<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:supportlib="http://schemas.android.com/apk/res-auto" >
 
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        supportlib:showAsAction="collapseActionView"
         android:title="@string/action_settings"/>
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="99"
-        android:showAsAction="never"
+        supportlib:showAsAction="collapseActionView"
         android:title="@string/logout_full"/>
 
 </menu><!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/menu/main.xml -->

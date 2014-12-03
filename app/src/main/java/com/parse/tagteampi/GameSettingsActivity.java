@@ -29,8 +29,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
-import org.w3c.dom.Text;
-
 import java.lang.reflect.Field;
 import java.util.List;
 
@@ -46,7 +44,7 @@ public class GameSettingsActivity extends Activity {
     private int GAME_RADIUS = 300;
     private int TAG_RADIUS = 10;
     private int TAG_LIMIT = 0;
-    private int MINUTES = 0;
+    private int SECONDS = 0;
     private String AVATAR = "crab";
     private String PRINTED_MESSAGE;
     private int PICKER_RANGE = 50; //set for quick editing
@@ -72,7 +70,7 @@ public class GameSettingsActivity extends Activity {
 //                PRINTED_MESSAGE = "The values as found:\nTag Distance: " + TAG_RADIUS
 //                        + "\nGameplay Radius: " + GAME_RADIUS
 //                        + "\nTag Limit: " + TAG_LIMIT
-//                        + "\nTime limit: " + MINUTES
+//                        + "\nTime limit: " + SECONDS
 //                        + "\nAvatar: " + AVATAR;
 //                Toast.makeText(GameSettingsActivity.this, PRINTED_MESSAGE, Toast.LENGTH_LONG).show();
 
@@ -94,7 +92,7 @@ public class GameSettingsActivity extends Activity {
                         //Creates Game parseObject for the current user to host a game.
                         final TagGame game = new TagGame();
                         game.setHostUser(ParseUser.getCurrentUser().getString("username"));
-                        game.setGameDuration(MINUTES);
+                        game.setGameDuration(SECONDS);
                         game.setMapRadius(Integer.parseInt(RADIUS_INTERVALS[gameRadiusNumberPicker.getValue()]));
                         game.setTagRadius(TAG_RADIUS);
                         game.setTagLimit(TAG_LIMIT);
@@ -247,43 +245,48 @@ public class GameSettingsActivity extends Activity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 switch (position) {
-                    case (0): {//15 MINUTES
-                        MINUTES = 15;
+                    case (0): {//5 MINUTES
+                        SECONDS = 300;
                         apply.setClickable(true);
                         break;
                     }
-                    case (1): {//30 MINUTES
-                        MINUTES = 30;
+                    case (1): {//15 MINUTES
+                        SECONDS = 900;
                         apply.setClickable(true);
                         break;
                     }
-                    case (2): {//1 hour
-                        MINUTES = 60;
+                    case (2): {//30 MINUTES
+                        SECONDS = 1800;
                         apply.setClickable(true);
                         break;
                     }
-                    case (3): {//2 HOURS
-                        MINUTES = 120;
+                    case (3): {//1 hour
+                        SECONDS = 3600;
                         apply.setClickable(true);
                         break;
                     }
-                    case (4): {//4 HOURS
-                        MINUTES = 240;
+                    case (4): {//2 HOURS
+                        SECONDS = 7200;
                         apply.setClickable(true);
                         break;
                     }
-                    case (5): {//8 HOURS
-                        MINUTES = 480;
+                    case (5): {//4 HOURS
+                        SECONDS = 14400;
                         apply.setClickable(true);
                         break;
                     }
-                    case (6): {//24 HOURS
-                        MINUTES = 1440;
+                    case (6): {//8 HOURS
+                        SECONDS = 28800;
+                        apply.setClickable(true);
+                        break;
+                    }
+                    case (7): {//24 HOURS
+                        SECONDS = 86400;
                         apply.setClickable(true);
                         break;
                     }
                     default: { //may be 0, may be 9, not sure
-                        MINUTES = 0;
+                        SECONDS = 10000000;     // this is the value InGameActivity uses as a "null" value
                         if (TAG_LIMIT == 0)
                             apply.setClickable(false);
                     }
@@ -320,7 +323,7 @@ public class GameSettingsActivity extends Activity {
                     gameRadiusNumberPicker.setValue(300); //apparently this works
                     GAME_RADIUS = 300; //just to make sure
                     timeLimitSpinner.setSelection(8); //gotta check that this is "unselected"
-                    MINUTES = 0;
+                    SECONDS = 0;
                 }
                 RadioButton crabRadio = (RadioButton) findViewById(R.id.crab);
                 crabRadio.setChecked(true);
@@ -398,7 +401,7 @@ public class GameSettingsActivity extends Activity {
         String buttonText = button.getText().toString();
         TAG_LIMIT = Integer.parseInt(buttonText);
         if (TAG_LIMIT == 0) {
-            if (MINUTES == 0)
+            if (SECONDS == 0)
                 apply.setClickable(false);
         } else //at least one condition met for game rules
             apply.setClickable(true);

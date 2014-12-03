@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout for the Open Games list in the Main Lobby Activity -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal" >
+
+    <!-- Name of Game's Host User -->
+    <TextView
+        android:id="@+id/hostuser_view"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="start" />
+
+    <!-- Variable-width separator space -->
+    <View
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+    <!-- Number of players in the game -->
+    <TextView
+        android:id="@+id/numplayers_view"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#FFFFFF"
+        android:layout_gravity="end" />
+
+</LinearLayout><!-- From: file:/C:/Users/Owner/AndroidstudioProjects/TagPi2/app/src/main/res/layout/activity_main_lobby_gameview.xml -->

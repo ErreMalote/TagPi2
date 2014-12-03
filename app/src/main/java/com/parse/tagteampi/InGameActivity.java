@@ -1,5 +1,6 @@
 package com.parse.tagteampi;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +8,12 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.Set;
+import java.util.TimeZone;
+
+import android.content.Context;
+import android.location.LocationManager;
+import android.support.v4.view.MenuItemCompat;
+import android.text.format.Time;
 import android.widget.Toast;
 import android.app.Activity;
 import android.app.Dialog;
@@ -14,7 +21,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.DialogFragment;
@@ -27,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -52,13 +57,13 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseGeoPoint;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
+
 
 public class InGameActivity extends FragmentActivity implements LocationListener,
         GooglePlayServicesClient.ConnectionCallbacks,
@@ -69,10 +74,12 @@ public class InGameActivity extends FragmentActivity implements LocationListener
      * Activity.onActivityResult
      */
     private final static int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
-    private String idGameObject;
+
     /*
      * Constants for location update parameters
      */
+    // Initial game timer value
+    private static final int DUMMY_GAME_TIMER_VALUE = 10000000;  // ten million seconds = no game duration OR uninitialized
     // Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
     private Button startGameButton;
@@ -122,14 +129,20 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     // Fields for the map radius in feet
     private float radius;
     private float lastRadius;
-    private int  tagLimit;
-    private double duration;
-    private float tagRadius;
-    private String hostUser;
-    private ParseGeoPoint centerCircle;
-    private boolean gameStarted;
 
+    // Game fields
+    private String gameObjectId;
+    private int tagLimit;
+    private long duration = DUMMY_GAME_TIMER_VALUE;
+    private float tagRadius;
+    private boolean isHostUser;
+    private ParseGeoPoint centerCircle;
+    private boolean gameStarted = false;
     private boolean enoughPlayers = false;
+    private TagGame game;                   // for storing results of Game Query at game start
+    private TextView durationTimerTextView;
+
+
 
     // Fields for helping process map and location changes
     private final Map<String, Marker> mapMarkers = new HashMap<String, Marker>();
@@ -148,11 +161,28 @@ public class InGameActivity extends FragmentActivity implements LocationListener
     // Adapter for the Parse query
     private ParseQueryAdapter<TagPlayer> postsQueryAdapter;
 
+    // Fields for updating current player position to Parse
+    private String playerObjectId;
+    private LocationManager lm;
+    private double latitude;
+    private double longitude;
+    private ParseGeoPoint playerGeoPoint;
+
+    // Fields for updating itt
+    private boolean itt;
+    private boolean initItt = false;
+    private TagPlayer ittPlayer;
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ONCREATE                                                                                     ONCREATE
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        idGameObject = getIntent().getExtras().getString("gameObjectId");
+        gameObjectId = getIntent().getExtras().getString("gameObjectId");
+        playerObjectId = getIntent().getExtras().getString("playerObjectId");
 
         ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
 
@@ -160,13 +190,17 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             @Override
             public void done(List<TagGame> list, ParseException e) {
                 for (TagGame aList : list) {
-                    if(aList.getObjectId().equalsIgnoreCase(idGameObject)){
+                    if(aList.getObjectId().equalsIgnoreCase(gameObjectId)){
                         radius = aList.getMapRadius();
                         tagLimit = aList.getTagLimit();
                         tagRadius = aList.getTagRadius();
                         duration = aList.getGameDuration();
                         centerCircle = aList.getLocation();
-                        hostUser = aList.getHostUser();
+                        if (aList.getHostUser().equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())) {
+                            isHostUser = true;
+                        } else {
+                            isHostUser = false;
+                        }
                         if(aList.getStartTime() != null){
                             gameStarted = true;
                         }else{
@@ -180,27 +214,17 @@ public class InGameActivity extends FragmentActivity implements LocationListener
 
         setContentView(R.layout.activity_main);
 
-        // Create a new global location parameters object
-        locationRequest = LocationRequest.create();
+        locationRequest = LocationRequest.create();                         // Create a new global location parameters object
+        locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);       // Set the update interval
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);    // Use high accuracy
+        locationRequest.setFastestInterval(FAST_INTERVAL_CEILING_IN_MILLISECONDS);  // Set the interval ceiling to one minute
+        locationClient = new LocationClient(this, this, this);      // Create a new location client, using the enclosing class to handle callbacks.
 
-        // Set the update interval
-        locationRequest.setInterval(UPDATE_INTERVAL_IN_MILLISECONDS);
-
-        // Use high accuracy
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        // Set the interval ceiling to one minute
-        locationRequest.setFastestInterval(FAST_INTERVAL_CEILING_IN_MILLISECONDS);
-
-        // Create a new location client, using the enclosing class to handle callbacks.
-        locationClient = new LocationClient(this, this, this);
-
-        // Set up a customized query
         ParseQueryAdapter.QueryFactory<TagPlayer> factory = new ParseQueryAdapter.QueryFactory<TagPlayer>() {
             public ParseQuery<TagPlayer> create() {
 
                 ParseQuery<TagPlayer> query = TagPlayer.getQuery();
-                query.whereEqualTo("gameId",idGameObject);
+                query.whereEqualTo("gameId", gameObjectId);
                 query.orderByDescending("createdAt");
                 return query;
             }
@@ -264,7 +288,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         // Set up the map fragment
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_fragment);
         // Enable the current location "blue dot"
-        mapFragment.getMap().setMyLocationEnabled(true);
+        mapFragment.getMap().setMyLocationEnabled(false);
         // Set up the camera change handler
         mapFragment.getMap().setOnCameraChangeListener(new OnCameraChangeListener() {
             public void onCameraChange(CameraPosition position) {
@@ -274,108 +298,211 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             }
         });
 
-        tickHandler.postDelayed(tickRunnable, 2000);
+        // Initialize start button so we can destroy it for all non-hosts
+        startGameButton = (Button) findViewById(R.id.startGameButton);
+        /*if (!isHostUser) {
+            startGameButton.setVisibility(View.GONE);
+        } else {
+            startGameButton.setVisibility(View.VISIBLE);
+        }*/
+
+
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // GAME DURATION TIMER Setup
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        durationTimerTextView = (TextView) findViewById(R.id.in_game_timer);
+        if (duration != DUMMY_GAME_TIMER_VALUE) {
+            durationTimerTextView.setText(secondsToString(duration));
+            durationTimerTextView.setVisibility(View.VISIBLE);
+        }
+        if (!initItt) {
+            initItt = initializeItt();
+        }
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        // GAME TICK Start - after everything is set up, start the tickRunnable
+        ////////////////////////////////////////////////////////////////////////////////////////////
+        tickHandler.postDelayed(tickRunnable, 1000);
     }
 
-    // tick function
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    // TICK FUNCTIONS                                                                               TICK FUNCTIONS
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
     protected Handler tickHandler = new Handler();
     protected Runnable tickRunnable = new Runnable() {
         @Override
         public void run() {
 
-         if (!gameStarted) {
-             if (hostUser.equalsIgnoreCase(ParseUser.getCurrentUser().getUsername())) {
-
-                 startGameButton = (Button) findViewById(R.id.startGameButton);
-                 startGameButton.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View v) {
-                         ParseQuery<ParseObject> playerCount = ParseQuery.getQuery("Player");
-                         playerCount.whereEqualTo("objectId", idGameObject);
-                         playerCount.findInBackground(new FindCallback<ParseObject>() {
-                             @Override
-                             public void done(List<ParseObject> playerList, ParseException e) {
-                                 if (e == null) {
-                                     if (playerList.size() < 3) {
-                                         Toast.makeText(InGameActivity.this, "Need 3 players to start",
-                                                 Toast.LENGTH_LONG).show();
-                                     } else if (playerList.size() > 8) {
-                                         Toast.makeText(InGameActivity.this, "Player maximum is 8.",
-                                                 Toast.LENGTH_LONG).show();
-                                     } else {
-                                         enoughPlayers = true;
-                                     }
-                                 }
-                             }
-                         });
-
-                         if (enoughPlayers) {
-                             ParseQuery<TagGame> gameStartQuery = ParseQuery.getQuery("Game");
-                             gameStartQuery.getInBackground(idGameObject, new GetCallback<TagGame>() {
-                                 @Override
-                                 public void done(TagGame gameStart, ParseException e) {
-                                     if (e == null) {
-                                         Date date = new Date();
-                                         date.getTime();
-                                         gameStart.setStartTime(date);
-                                         gameStart.put("startTime", date);
-                                         gameStart.saveInBackground();
-                                     }
-                                 }
-                             });
-                         }
-
-                         // Button folds out of layout after being pressed.
-                         Button button = (Button) v;
-                         button.setVisibility(View.GONE);
-
-                         //Game starts
-                         gameStarted = true;
-                     }
-                 });
-
-
-             } else {
-
-                 ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
-                 gameSettings.findInBackground(new FindCallback<TagGame>() {
-                     @Override
-                     public void done(List<TagGame> list, ParseException e) {
-                         for (TagGame aList : list) {
-                             if (aList.getObjectId().equalsIgnoreCase(idGameObject)) {
-                                 if (aList.getStartTime() != null) {
-                                     gameStarted = true;
-                                 } else {
-                                     gameStarted = false;
-                                 }
-                             }
-                         }
-                     }
-                 });
-             }
-         }
-         else {
-
-                    ParseQuery<TagPlayer> gameSettings = ParseQuery.getQuery("Player");
-                    gameSettings.findInBackground(new FindCallback<TagPlayer>() {
+            // STEP 1: Check if game has ended
+            //TODO: Add stuff for checking if tag limit has been reached
+            //TODO: Get score info before deleting game
+            if (duration <= 0) {
+                if (isHostUser) {
+                    ParseQuery<TagGame> finalquery = TagGame.getQuery();
+                    finalquery.getInBackground(gameObjectId, new GetCallback<TagGame>() {
                         @Override
-                        public void done(List<TagPlayer> list, ParseException e) {
-                            for (TagPlayer aList : list) {
-                                if (aList.getGame().equalsIgnoreCase(idGameObject) && ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(aList.getPlayer())) {
-                                    aList.setLocation(new ParseGeoPoint(lastLocation.getLatitude(), lastLocation.getLongitude()));
+                        public void done(TagGame tagGame, ParseException e) {
+                            tagGame.deleteInBackground();   // Bye bye game!
+                        }
+                    });
+                }
+
+                Toast.makeText(getApplicationContext(), "Game is over, everyone go home.", Toast.LENGTH_LONG).show();
+                finish();
+
+            }
+
+            // STEP 2: Decrement duration (every second)
+            if (duration != DUMMY_GAME_TIMER_VALUE) {
+                if (gameStarted) {
+                    duration--;
+                    durationTimerTextView.setText(secondsToString(duration));
+                } else {
+                    if (durationTimerTextView.getVisibility() == View.INVISIBLE) {
+                        durationTimerTextView.setText(secondsToString(duration));
+                        durationTimerTextView.setVisibility(View.VISIBLE);
+                    }
+
+                }
+            }
+
+            /*
+            * Used to update personal location to Parse everytime the runnable executes.
+            */
+            lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+            Location playerLoc = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            if (playerLoc != null) {
+                latitude = playerLoc.getLatitude();
+                longitude = playerLoc.getLongitude();
+                playerGeoPoint = new ParseGeoPoint(latitude, longitude);
+
+                ParseQuery<TagPlayer> player = ParseQuery.getQuery("Player");
+                player.getInBackground(playerObjectId, new GetCallback<TagPlayer>() {
+                    @Override
+                    public void done(TagPlayer tagPlayer, ParseException e) {
+                        if (e == null) {
+                            tagPlayer.setLocation(playerGeoPoint);
+                            tagPlayer.saveInBackground();
+                        }
+                    }
+                });
+            }
+
+
+
+            // STEP 2: Pregame Stuff
+            if (!gameStarted) {
+                // HOST USER pregame stuff to do
+                if (isHostUser) {
+                    startGameButton.setVisibility(View.VISIBLE);
+                    startGameButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ParseQuery<ParseObject> playerCount = ParseQuery.getQuery("Player");
+                            playerCount.whereEqualTo("gameId", gameObjectId);
+                            playerCount.findInBackground(new FindCallback<ParseObject>() {
+                                @Override
+                                public void done(List<ParseObject> playerList, ParseException e) {
+                                    if (e == null) {
+                                        if (playerList.size() < 2) {
+                                            Toast.makeText(InGameActivity.this, "Need 3 players to start",
+                                                    Toast.LENGTH_LONG).show();
+                                        } else if (playerList.size() > 8) {
+                                            Toast.makeText(InGameActivity.this, "Player maximum is 8.",
+                                                    Toast.LENGTH_LONG).show();
+                                        } else {
+                                            enoughPlayers = true;
+                                        }
+                                    }
+                                }
+                            });
+
+                            if (enoughPlayers) {
+                                ParseQuery<TagGame> gameStartQuery = ParseQuery.getQuery("Game");
+                                gameStartQuery.getInBackground(gameObjectId, new GetCallback<TagGame>() {
+                                    @Override
+                                    public void done(TagGame tg, ParseException e) {
+                                        if (e == null) {
+                                            Date date = new Date();
+                                            date.getTime();
+                                            tg.setStartTime(date);
+                                            tg.put("startedAt", date);
+                                            tg.saveInBackground();
+
+                                            duration = tg.getGameDuration();
+                                            game = tg;
+                                        }
+                                    }
+                                });
+                            }
+
+                            // Button folds out of layout after being pressed.
+                            if (enoughPlayers) {
+                                Button button = (Button) v;
+                                button.setVisibility(View.GONE);
+                            }
+
+                            //Game starts
+                            gameStarted = true;
+                        }
+                    });
+
+                    // PLAYER USER pregame stuff to do
+                } else {
+                    startGameButton.setVisibility(View.GONE);
+                    ParseQuery<TagGame> gameSettings = ParseQuery.getQuery("Game");
+                    gameSettings.findInBackground(new FindCallback<TagGame>() {
+                        @Override
+                        public void done(List<TagGame> list, ParseException e) {
+                            for (TagGame aList : list) {
+                                if (aList.getObjectId().equalsIgnoreCase(gameObjectId)) {
+                                    if (aList.getStartTime() != null) {
+                                        game = aList;
+                                        duration = aList.getGameDuration();
+                                        gameStarted = true;
+
+                                    }
                                 }
                             }
                         }
                     });
-
-
                 }
+                // STEP 2 alternate: After game has started
+            } else {
+                startGameButton.setVisibility(View.GONE);
+                // STEP 3: EVERY 2 SECONDS - Get all Players in the game
+                // TODO: make every 2 seconds
+                ParseQuery<TagPlayer> gameSettings = ParseQuery.getQuery("Player");
+                gameSettings.whereEqualTo("gameId", gameObjectId);
+                gameSettings.findInBackground(new FindCallback<TagPlayer>() {
+                    @Override
+                    public void done(List<TagPlayer> list, ParseException e) {
+                        for (TagPlayer aList : list) {
+                            if (aList.getGame().equalsIgnoreCase(gameObjectId) && ParseUser.getCurrentUser().getUsername().equalsIgnoreCase(aList.getPlayer())) {
 
+                                itt = aList.isItt();
+                            }
+                        }
+
+                        if (itt) {
+                            isItt();
+                            //Toast.makeText(InGameActivity.this, "checking for people", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+                // TODO: STEP 4: ITT ONLY, EVERY 2 SECONDS - Check for taggable players
+
+                // TODO: STEP 6: Decrement duration
+
+            }
+
+
+
+
+            // FINALLY, call the next tick
             tickHandler.postDelayed(this, 1000);
-
         }
-
-
     };
 
     /*
@@ -392,6 +519,15 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         locationClient.disconnect();
 
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        tickHandler.removeCallbacks(tickRunnable);
+        final Intent toMainLobby = new Intent(getBaseContext(), MainLobbyActivity.class);
+        startActivity(toMainLobby);
+
     }
 
     /*
@@ -434,6 +570,28 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         doMapQuery();
         doListQuery();
     }
+
+    /*
+    * Inflates the Action Bar.
+    */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        getMenuInflater().inflate(R.menu.main, menu);
+
+
+        menu.findItem(R.id.action_settings).setOnMenuItemClickListener(new OnMenuItemClickListener() {
+            public boolean onMenuItemClick(MenuItem item) {
+                startActivity(new Intent(InGameActivity.this, SettingsActivity.class));
+                return true;
+            }
+        });
+
+        return true;
+    }
+
+
 
     /*
      * Handle results returned to this Activity by other Activities started with
@@ -556,6 +714,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         }
     }
 
+
     /*
      * Report location updates to the UI.
      */
@@ -563,7 +722,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         currentLocation = location;
         if (lastLocation != null
                 && geoPointFromLocation(location)
-                .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.01) {
+                .distanceInKilometersTo(geoPointFromLocation(lastLocation)) < 0.001) {
             // If the location hasn't changed by more than 10 meters, ignore it.
             return;
         }
@@ -618,7 +777,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
             // Refreshes the list view with new data based
             // usually on updated location data.
             postsQueryAdapter.loadObjects();
-    }
+        }
     }
 
     /*
@@ -640,7 +799,7 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         ParseQuery<TagPlayer> mapQuery = TagPlayer.getQuery();
         // Set up additional query filters
         mapQuery.whereWithinKilometers("location", myPoint, MAX_POST_SEARCH_DISTANCE);
-        mapQuery.whereEqualTo("gameId",idGameObject);
+        mapQuery.whereEqualTo("gameId", gameObjectId);
         mapQuery.include("user");
         mapQuery.orderByDescending("createdAt");
         mapQuery.setLimit(MAX_POST_SEARCH_RESULTS);
@@ -897,20 +1056,6 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         return builder.build();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        menu.findItem(R.id.action_settings).setOnMenuItemClickListener(new OnMenuItemClickListener() {
-            public boolean onMenuItemClick(MenuItem item) {
-                startActivity(new Intent(InGameActivity.this, SettingsActivity.class));
-                return true;
-            }
-        });
-        return true;
-    }
-
     /*
      * Show a dialog returned by Google Play services for the connection error code
      */
@@ -967,6 +1112,64 @@ public class InGameActivity extends FragmentActivity implements LocationListener
         }
     }
 
+    // Converts time given in seconds to hh:mm:ss formatted string
+    private String secondsToString(long seconds) {
+
+        int millis = (int) (seconds * 1000);
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        df.setTimeZone(tz);
+        String time = df.format(new Date(millis));
+        return time;
+    }
+
+    private boolean initializeItt() {
+        ParseQuery<TagPlayer> player = ParseQuery.getQuery("Player");
+        player.getInBackground(playerObjectId, new GetCallback<TagPlayer>() {
+            @Override
+            public void done(TagPlayer tagPlayer, ParseException e) {
+                if (isHostUser) {
+                    tagPlayer.setItt();
+                } else {
+                    tagPlayer.setNotItt();
+                }
+                tagPlayer.saveInBackground();
+            }
+        });
+        return true;
+    }
+
+    private void isItt () {
+
+        ParseQuery<TagPlayer> ittPlay = ParseQuery.getQuery("Player");
+        ittPlay.getInBackground(playerObjectId, new GetCallback<TagPlayer>() {
+            @Override
+            public void done(final TagPlayer ittPlayerLoc, ParseException e) {
+                ittPlayer = ittPlayerLoc;
+            }
+        });
+
+        ParseQuery<TagPlayer> itt = ParseQuery.getQuery("Player");
+        itt.whereEqualTo("gameId",gameObjectId);
+        itt.whereNotEqualTo("playerId", ParseUser.getCurrentUser().getUsername());
+        itt.findInBackground(new FindCallback<TagPlayer>() {
+            @Override
+            public void done(List<TagPlayer> tagPlayers, ParseException e) {
+                for(TagPlayer tagplayer: tagPlayers){
+
+                    double distance = tagplayer.getLocation().distanceInKilometersTo(ittPlayer.getLocation());
+                    if (distance <= 0.01 * tagRadius) {
+                        ittPlayer.setNotItt();
+                        tagplayer.setItt();
+                        ittPlayer.saveInBackground();
+                        tagplayer.saveInBackground();
+                        break;
+                    }
+                }
+            }
+        });
+
+    }
 
     /*
     private void autoTag(String gameObjectId, ParseUser currentUser) {

@@ -26,7 +26,7 @@
         />
 
 
-        <!--- this will make 2 columms -->
+    <!--- this will make 2 columms -->
     <LinearLayout
         android:id="@+id/create_button"
         android:layout_width="wrap_content"
@@ -37,17 +37,17 @@
         >
 
 
-    <Button
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/button_create_game"
-        android:text="@string/createGame" />
-
-    <!--Button
+        <Button
             android:layout_width="150dp"
             android:layout_height="wrap_content"
-            android:id="@+id/button_test_suspension"
-            android:text="suspension test" /-->
+            android:id="@+id/button_create_game"
+            android:text="@string/createGame" />
+
+        <!--Button
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/button_test_suspension"
+                android:text="suspension test" /-->
     </LinearLayout>
 
 

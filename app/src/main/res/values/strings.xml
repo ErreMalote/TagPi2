@@ -35,7 +35,7 @@
     <string name="defaultSettings">Default</string>
     <string name="activity_suspension_title">Suspension List</string>
     <string-array name="times_array">
-        <item>10 minutes</item>
+        <item>5 minutes</item>
         <item>15 minutes</item>
         <item>30 minutes</item>
         <item>1 hour</item>
@@ -49,5 +49,4 @@
     <string name="exit_lobby">Exit Lobby</string>
     <string name="title_activity_lobby">LobbyActivity</string>
     <string name="start_game">Start Game</string>
-
 </resources>
